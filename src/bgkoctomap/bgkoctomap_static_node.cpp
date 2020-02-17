@@ -4,7 +4,7 @@
 #include "bgkoctomap.h"
 #include "markerarray_pub.h"
 
-void load_pcd(std::string filename, la3dm::point3f &origin, la3dm::PCLPointCloud &cloud) {
+void load_pcd(std::string filename, la3dm::point3f &origin, la3dm::PCLPointCloudwithLabel &cloud) {
     pcl::PCLPointCloud2 cloud2;
     Eigen::Vector4f _origin;
     Eigen::Quaternionf orientaion;
@@ -13,6 +13,21 @@ void load_pcd(std::string filename, la3dm::point3f &origin, la3dm::PCLPointCloud
     origin.x() = _origin[0];
     origin.y() = _origin[1];
     origin.z() = _origin[2];
+}
+
+void process_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::PCLPointCloud &cloud) {
+    for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
+      la3dm::PCLPointType p;
+      p.x = it->x;
+      p.y = it->y;
+      p.z = it->z;
+      cloud.push_back(p);
+      // class 1: floor
+      // class 2: wall
+      // class 3: cylinder
+      if (it->label > 1.0)
+        it->label = 0;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -85,12 +100,16 @@ int main(int argc, char **argv) {
 
     ros::Time start = ros::Time::now();
     for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
-        la3dm::PCLPointCloud cloud;
+        la3dm::PCLPointCloudwithLabel cloudwlabel;
         la3dm::point3f origin;
         std::string filename(dir + "/" + prefix + "_" + std::to_string(scan_id) + ".pcd");
-        load_pcd(filename, origin, cloud);
+        load_pcd(filename, origin, cloudwlabel);
+
+        la3dm::PCLPointCloud cloud;
+        process_pcd(cloudwlabel, cloud);
 
         map.insert_pointcloud(cloud, origin, resolution, free_resolution, max_range);
+        map.insert_traversability(cloudwlabel, origin, resolution, free_resolution, max_range);
         ROS_INFO_STREAM("Scan " << scan_id << " done");
     }
     ros::Time end = ros::Time::now();
@@ -138,7 +157,8 @@ int main(int argc, char **argv) {
         if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
             if (original_size) {
                 la3dm::point3f p = it.get_loc();
-                m_pub.insert_point3d(p.x(), p.y(), p.z(), min_z, max_z, it.get_size());
+                float traversability = it.get_node().get_prob_traversability();
+                m_pub.insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
             } else {
                 auto pruned = it.get_pruned_locs();
                 for (auto n = pruned.cbegin(); n < pruned.cend(); ++n)

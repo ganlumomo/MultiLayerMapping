@@ -28,6 +28,10 @@ namespace la3dm {
         return m_A / (m_A + m_B);
     }
 
+    float Occupancy::get_prob_traversability() const {
+        return tm_A / (tm_A + tm_B);
+    }
+
     void Occupancy::update(float ybar, float kbar) {
         classified = true;
         m_A += ybar;
@@ -42,6 +46,13 @@ namespace la3dm {
                                                                                                    : State::UNKNOWN);
         }
     }
+
+    void Occupancy::update_traversability(float ybar, float kbar) {
+        //classified = true;
+        tm_A += ybar;
+        tm_B += kbar - ybar;
+    }
+
 
     std::ofstream &operator<<(std::ofstream &os, const Occupancy &oc) {
         os.write((char *) &oc.m_A, sizeof(oc.m_A));

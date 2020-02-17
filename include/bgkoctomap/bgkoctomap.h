@@ -14,6 +14,8 @@ namespace la3dm {
     /// PCL PointCloud types as input
     typedef pcl::PointXYZ PCLPointType;
     typedef pcl::PointCloud<PCLPointType> PCLPointCloud;
+    typedef pcl::PointXYZL PCLPointwithLabel;
+    typedef pcl::PointCloud<PCLPointwithLabel> PCLPointCloudwithLabel;
 
     /*
      * @brief BGKOctoMap
@@ -80,6 +82,10 @@ namespace la3dm {
          * @param max_range maximum range for beams to be considered as valid measurements (-1 if no limitation)
          */
         void insert_pointcloud(const PCLPointCloud &cloud, const point3f &origin, float ds_resolution,
+                               float free_res = 2.0f,
+                               float max_range = -1);
+
+        void insert_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
                                float free_res = 2.0f,
                                float max_range = -1);
 
@@ -368,6 +374,9 @@ namespace la3dm {
 
         /// Get training data from one sensor scan.
         void get_training_data(const PCLPointCloud &cloud, const point3f &origin, float ds_resolution,
+                               float free_resolution, float max_range, GPPointCloud &xy) const;
+
+        void get_training_data_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
                                float free_resolution, float max_range, GPPointCloud &xy) const;
 
         float resolution;

@@ -14,7 +14,7 @@ endif()
 add_definitions(-DOPENMP)
 
 ## Enable Debug Info
-#add_definitions(-DDEBUG)
+add_definitions(-DDEBUG)
 
 # add_definitions(-DPREDICT)
 
@@ -129,6 +129,7 @@ set(COMMON_SOURCE_FILES src/common/point3f)
 set(BGK_SOURCE_FILES
     src/bgkoctomap/bgkblock.cpp
     src/bgkoctomap/bgkoctomap.cpp
+    src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/bgkoctree_node.cpp
     src/bgkoctomap/bgkoctree.cpp)
 

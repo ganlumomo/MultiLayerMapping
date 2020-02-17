@@ -11,7 +11,7 @@
      -->
     <arg name="data" value="$(find la3dm)/data"/>
 
-    <arg name="dataset" default="sim_structured"/>
+    <arg name="dataset" default="sim_unstructured_annotated"/>
     <arg name="dir" value="$(arg data)/$(arg dataset)"/>
 
     <arg name="prefix" default="$(arg dataset)"/>
@@ -20,7 +20,7 @@
     <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
 
     <!--Start the LA3DM node -->
-    <node pkg="la3dm" type="$(arg method)_server" name="la3dm_server" output="screen">
+    <node pkg="la3dm" type="$(arg method)_static_node" name="la3dm_static" output="screen">
 
         <param name="dir" value="$(arg dir)"/>
         <param name="prefix" value="$(arg prefix)"/>
