@@ -19,6 +19,7 @@ namespace la3dm {
         using MatrixYType = Eigen::Matrix<T, -1, 1>;
 
         BGKInference(T sf2, T ell) : sf2(sf2), ell(ell), trained(false) { }
+        BGKInference(T sf2, T ell, int num_class) : sf2(sf2), ell(ell), num_class(num_class), trained(false) { }
 
         /*
          * @brief Fit BGK Model
@@ -78,6 +79,35 @@ namespace la3dm {
         	kbar = Ks.rowwise().sum().array();
         }
 
+        void predict(const std::vector<T> &xs, std::vector<std::vector<T>> &ybars) {
+            assert(xs.size() % dim == 0);
+            MatrixXType Xs = Eigen::Map<const MatrixXType>(xs.data(), xs.size() / dim, dim);
+            MatrixKType Ks;
+
+            assert(trained == true);
+            covSparse(Xs, x, Ks);
+
+            // resize ybars to the size of num_points x num_class
+            ybars.resize(Xs.rows());
+            for (int r = 0; r < Xs.rows(); ++r)
+              ybars[r].resize(num_class);
+
+            // generate a ytype with 0 and 1 labels
+            MatrixYType Ys = y;
+            for (int k = 0; k < num_class; ++k) {
+              for (int r = 0; r < y.rows(); ++r) {
+                if (y(r, 0) == k)
+                  Ys(r, 0) = 1;
+                else
+                  Ys(r, 0) = 0;
+              }
+              MatrixYType ybar;
+              ybar = Ks * Ys;
+              for (int r = 0; r < y.rows(); ++r)
+                ybars[r][k] = ybar(r, 0);
+            }
+        }
+
     private:
         /*
          * @brief Compute Euclid distances between two vectors.
@@ -127,6 +157,7 @@ namespace la3dm {
 
         T sf2;    // signal variance
         T ell;    // length-scale
+        int num_class;
 
         MatrixXType x;   // temporary storage of training data
         MatrixYType y;   // temporary storage of training labels

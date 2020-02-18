@@ -5,8 +5,11 @@
 #include <vector>
 #include "point3f.h"
 #include "bgkoctree_node.h"
+#include "bgkoctree_node_semantics.h"
 
 namespace la3dm {
+
+    typedef Semantics OcTreeNode;
 
     /// Hash key to index OcTree nodes given depth and the index in that layer.
     typedef int OcTreeHashKey;

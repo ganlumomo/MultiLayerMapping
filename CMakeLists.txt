@@ -129,28 +129,39 @@ set(COMMON_SOURCE_FILES src/common/point3f)
 set(BGK_SOURCE_FILES
     src/bgkoctomap/bgkblock.cpp
     src/bgkoctomap/bgkoctomap.cpp
-    src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/bgkoctree_node.cpp
-    src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctree.cpp)
 
 
-add_executable(bgkoctomap_static_node 
-    ${BGK_SOURCE_FILES}
+add_executable(bgkoctomap_semantics_node 
+  ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
-    src/bgkoctomap/bgkoctomap_static_node.cpp
+    src/bgkoctomap/bgkoctree_node_semantics.cpp
+    src/bgkoctomap/bgkoctomap_semantics.cpp
+    src/bgkoctomap/bgkoctomap_traversability.cpp
+    src/bgkoctomap/bgkoctomap_semantics_node.cpp
 )
 
+#add_executable(bgkoctomap_static_node
+#    ${BGK_SOURCE_FILES}
+#    ${COMMON_SOURCE_FILES}
+#    src/bgkoctomap/bgkoctomap_occupancy.cpp
+#    src/bgkoctomap/bgkoctomap_traversability.cpp
+#    src/bgkoctomap/bgkoctomap_static_node.cpp
+#)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(BGKOctoMap_node BGKOctoMap_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(bgkoctomap_static_node
+target_link_libraries(bgkoctomap_semantics_node
         ${catkin_LIBRARIES}
 )
 
+#target_link_libraries(bgkoctomap_static_node
+#        ${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##

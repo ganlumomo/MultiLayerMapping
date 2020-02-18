@@ -64,7 +64,7 @@ namespace la3dm {
         float m_A, m_B;
         is.read((char *) &m_A, sizeof(m_A));
         is.read((char *) &m_B, sizeof(m_B));
-        oc = OcTreeNode(m_A, m_B);
+        oc = Occupancy(m_A, m_B);
         return is;
     }
 

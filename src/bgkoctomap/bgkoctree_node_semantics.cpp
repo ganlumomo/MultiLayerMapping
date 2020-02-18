@@ -7,13 +7,15 @@
 namespace la3dm {
 
     /// Default static values
+    int Semantics::num_class = 2;
     float Semantics::sf2 = 1.0f;
     float Semantics::ell = 1.0f;
-    //float Occupancy::free_thresh = 0.3f;
-    //float Occupancy::occupied_thresh = 0.7f;
-    //float Occupancy::var_thresh = 1000.0f;
+    float Semantics::free_thresh = 0.3f;
+    float Semantics::occupied_thresh = 0.7f;
+    float Semantics::var_thresh = 1000.0f;
     float Semantics::prior_A = 0.5f;
     float Semantics::prior_B = 0.5f;
+    float Semantics::prior = 0.5f;
 
     /*Occupancy::Occupancy(float A, float B) : m_A(Occupancy::prior_A + A), m_B(Occupancy::prior_B + B) {
         classified = false;

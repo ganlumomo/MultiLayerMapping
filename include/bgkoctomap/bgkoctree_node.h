@@ -106,7 +106,7 @@ namespace la3dm {
         float tm_B;
     };
 
-    typedef Occupancy OcTreeNode;
+    //typedef Occupancy OcTreeNode;
 }
 
 #endif // LA3DM_BGK_OCCUPANCY_H

@@ -5,12 +5,9 @@
 #include <fstream>
 #include <vector>
 
-namespace la3dm {
+#include "bgkoctree_node.h"
 
-    /// Occupancy state: before pruning: FREE, OCCUPIED, UNKNOWN; after pruning: PRUNED
-    enum class State : char {
-        FREE, OCCUPIED, UNKNOWN, PRUNED
-    };
+namespace la3dm {
 
     /*
      * @brief Inference ouputs and occupancy state.
@@ -20,6 +17,7 @@ namespace la3dm {
      * Before using this class, set the static member variables first.
      */
     class Semantics {
+
         //friend std::ostream &operator<<(std::ostream &os, const Occupancy &oc);
 
         //friend std::ofstream &operator<<(std::ofstream &os, const Occupancy &oc);
@@ -99,16 +97,16 @@ namespace la3dm {
         std::vector<float> ms;
         State state;
         int semantics;
-        int num_class;
+        static int num_class;
 
         static float sf2;
         static float ell;   // length-scale
 
         static float prior;
 
-        //static float free_thresh;     // FREE occupancy threshold
-        //static float occupied_thresh; // OCCUPIED occupancy threshold
-        //static float var_thresh;
+        static float free_thresh;     // FREE occupancy threshold
+        static float occupied_thresh; // OCCUPIED occupancy threshold
+        static float var_thresh;
 
         // For traversability
         float tm_A;
@@ -117,8 +115,6 @@ namespace la3dm {
         static float prior_A; // prior on alpha
         static float prior_B; // prior on beta
     };
-
-    //typedef Semantics OcTreeNode;
 }
 
 #endif // LA3DM_SEMANTICS_H
