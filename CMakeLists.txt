@@ -131,6 +131,7 @@ set(BGK_SOURCE_FILES
     src/bgkoctomap/bgkoctomap.cpp
     src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/bgkoctree_node.cpp
+    src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctree.cpp)
 
 
