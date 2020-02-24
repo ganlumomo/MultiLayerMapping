@@ -1,0 +1,18 @@
+# sim_unstructured config
+num_class: 14
+topic: semantic_map
+
+# Information about range-finder data
+scan_num: 12 # How many scans to use
+max_range: 14 # Sensor max range (m)
+
+# Bounds on map height
+min_z: 0
+max_z: 4.3
+
+original_size: true
+predict: false
+
+ds_resolution: -1
+free_resolution: 10.0
+prior: 0.001

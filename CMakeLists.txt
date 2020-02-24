@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(la3dm)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -27,6 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
         nav_msgs
         pcl_ros
         roscpp
+        tf_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -114,6 +116,7 @@ catkin_package(
 include_directories(
         include/bgkoctomap
         include/common
+        include/dataset_devkit
         ${catkin_INCLUDE_DIRS}
 )
 
@@ -134,12 +137,21 @@ set(BGK_SOURCE_FILES
 
 
 add_executable(bgkoctomap_semantics_node 
-  ${BGK_SOURCE_FILES}
+    ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
     src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctomap_semantics.cpp
     src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/bgkoctomap_semantics_node.cpp
+)
+
+add_executable(cassie_node 
+    ${BGK_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgkoctomap/bgkoctree_node_semantics.cpp
+    src/bgkoctomap/bgkoctomap_semantics.cpp
+    src/bgkoctomap/bgkoctomap_traversability.cpp
+    src/bgkoctomap/cassie_node.cpp
 )
 
 #add_executable(bgkoctomap_static_node
@@ -156,6 +168,10 @@ add_executable(bgkoctomap_semantics_node
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(bgkoctomap_semantics_node
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(cassie_node
         ${catkin_LIBRARIES}
 )
 

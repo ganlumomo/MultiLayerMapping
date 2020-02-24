@@ -106,11 +106,11 @@ int main(int argc, char **argv) {
         std::string filename(dir + "/" + prefix + "_" + std::to_string(scan_id) + ".pcd");
         load_pcd(filename, origin, cloudwlabel);
 
-        map.insert_semantics(cloudwlabel, origin, resolution, free_resolution, max_range, 4);
+        map.insert_semantics(cloudwlabel, origin, ds_resolution, free_resolution, max_range, 4);
         
         la3dm::PCLPointCloud cloud;
         process_pcd(cloudwlabel, cloud);
-        map.insert_traversability(cloudwlabel, origin, resolution, free_resolution, max_range);
+        map.insert_traversability(cloudwlabel, origin, ds_resolution, free_resolution, max_range);
         ROS_INFO_STREAM("Scan " << scan_id << " done");
     }
     ros::Time end = ros::Time::now();
