@@ -135,7 +135,7 @@ namespace la3dm {
                     }
 
                     // Update traversability according to semantics
-                    //node.update_traversability_with_semantics();
+                    node.update_traversability_with_semantics();
 
                     // Only need to update if kernel density total kernel density est > 0
                     if (kbar[j] > 0.0)

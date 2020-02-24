@@ -81,13 +81,14 @@ int main(int argc, char **argv) {
             "prior: " << prior
             );
 
-    CassieData cassie_data(nh, static_frame, map_topic, 
+    CassieData cassie_data(nh, static_frame, map_topic, traversability_map_topic,
         resolution, block_depth, num_class,
         sf2, ell, free_thresh, occupied_thresh, var_thresh,
         prior_A, prior_B, prior,
         ds_resolution, free_resolution, max_range);
 
-    ros::Subscriber sub = nh.subscribe("/labeled_pointcloud", 1, &CassieData::SemanticPointCloudCallback, &cassie_data);
+    ros::Subscriber ssub = nh.subscribe("/labeled_pointcloud", 1, &CassieData::SemanticPointCloudCallback, &cassie_data);
+    ros::Subscriber tsub = nh.subscribe("/labeled_pointcloud_traversability", 1, &CassieData::TraversabilityPointCloudCallback, &cassie_data);
 
     ros::spin();
 
