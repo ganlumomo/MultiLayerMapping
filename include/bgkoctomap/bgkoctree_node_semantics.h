@@ -63,6 +63,8 @@ namespace la3dm {
          * @param kbar kernel density of negative class (unoccupied)
          */
         void update(std::vector<float>& ybars);
+        
+        void update_traversability_with_semantics();
 
         void update_traversability(float ybar, float kbar);
 

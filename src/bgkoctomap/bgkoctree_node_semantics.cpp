@@ -65,6 +65,13 @@ namespace la3dm {
         //}
     }
 
+    void Semantics::update_traversability_with_semantics() {
+        if (semantics == 1)
+          tm_A += 1;
+        if (semantics > 1)
+          tm_B += 1;
+    }
+
     void Semantics::update_traversability(float ybar, float kbar) {
         //classified = true;
         tm_A += ybar;
