@@ -45,8 +45,8 @@ namespace la3dm {
     void Semantics::update(std::vector<float>& ybars) {
         assert (ybars.size() == num_class);
         classified = true;
-        for (int i = 0; i < num_class; ++i)
-          ms[i] += ybars[i];
+        for (int k = 0; k < num_class; ++k)
+          ms[k] += ybars[k];
 
         //float var = get_var();
         //if (var > Occupancy::var_thresh)

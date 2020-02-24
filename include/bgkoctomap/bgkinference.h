@@ -102,9 +102,9 @@ namespace la3dm {
                   Ys(r, 0) = 0;
               }
               MatrixYType ybar;
-              ybar = Ks * Ys;
-              for (int r = 0; r < y.rows(); ++r)
-                ybars[r][k] = ybar(r, 0);
+              ybar = (Ks * Ys).array();
+              for (int r = 0; r < ybar.rows(); ++r)
+                ybars[r][k] = ybar(r);
             }
         }
 
