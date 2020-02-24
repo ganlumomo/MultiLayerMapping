@@ -16,3 +16,4 @@ predict: false
 ds_resolution: -1
 free_resolution: 10.0
 prior: 0.001
+block_depth: 4

@@ -71,10 +71,10 @@ namespace la3dm {
         //if (semantics > 1)
           //tm_B += 1;
         if (semantics == 2 || semantics == 3 || semantics == 4 || semantics == 11)
-          tm_A += 30;
+          tm_A += 100;
         if (semantics == 1 || semantics == 5 || semantics == 6 || semantics == 7 || semantics == 8 ||
             semantics == 9 || semantics == 10 || semantics == 12 || semantics == 13)
-          tm_B += 30;
+          tm_B += 100;
     }
 
     void Semantics::update_traversability(float ybar, float kbar) {
