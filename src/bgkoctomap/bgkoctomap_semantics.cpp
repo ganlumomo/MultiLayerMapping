@@ -181,7 +181,7 @@ namespace la3dm {
                     // Only need to update if kernel density total kernel density est > 0
                     //if (kbar[j] > 0.0)
                         node.update(ybars[j]);
-                        node.update_traversability_with_semantics();
+                        //node.update_traversability_with_semantics();
                 }
             }
         }

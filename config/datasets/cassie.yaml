@@ -1,6 +1,6 @@
 # sim_unstructured config
 num_class: 14
-topic: semantic_map
+topic: /semantic_map
 
 # Information about range-finder data
 scan_num: 12 # How many scans to use

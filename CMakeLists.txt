@@ -142,14 +142,14 @@ set(BGK_SOURCE_FILES
     src/bgkoctomap/bgkoctree.cpp)
 
 
-#add_executable(bgkoctomap_semantics_node 
-#    ${BGK_SOURCE_FILES}
-#    ${COMMON_SOURCE_FILES}
-#    src/bgkoctomap/bgkoctree_node_semantics.cpp
-#    src/bgkoctomap/bgkoctomap_semantics.cpp
-#    src/bgkoctomap/bgkoctomap_traversability.cpp
-#    src/bgkoctomap/bgkoctomap_semantics_node.cpp
-#)
+add_executable(bgkoctomap_semantics_node 
+    ${BGK_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    src/bgkoctomap/bgkoctree_node_semantics.cpp
+    src/bgkoctomap/bgkoctomap_semantics.cpp
+    src/bgkoctomap/bgkoctomap_traversability.cpp
+    src/bgkoctomap/bgkoctomap_semantics_node.cpp
+)
 
 add_executable(cassie_node 
     ${BGK_SOURCE_FILES}
@@ -178,9 +178,9 @@ add_executable(semantickitti_util
 # add_dependencies(BGKOctoMap_node BGKOctoMap_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(bgkoctomap_semantics_node
-#        ${catkin_LIBRARIES}
-#)
+target_link_libraries(bgkoctomap_semantics_node
+        ${catkin_LIBRARIES}
+)
 
 target_link_libraries(cassie_node
         ${catkin_LIBRARIES}

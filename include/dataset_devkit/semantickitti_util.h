@@ -3,9 +3,6 @@
 #include <string>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <pcl/common/transforms.h>
-#include <pcl/io/pcd_io.h>
-#include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 #include "markerarray_pub.h"

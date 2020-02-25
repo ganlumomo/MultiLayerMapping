@@ -1,6 +1,9 @@
 #include <string>
 #include <iostream>
 #include <ros/ros.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/common/transforms.h>
 #include "bgkoctomap.h"
 #include "markerarray_pub.h"
 
@@ -28,6 +31,34 @@ void process_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::PCLPointClou
       if (it->label > 1.0)
         it->label = 0;
     }
+}
+
+void visualize_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::point3f origin, sensor_msgs::PointCloud2 &cloud_msg) {
+    pcl::PointCloud<pcl::PointXYZRGB> cloudwcolor;
+    for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
+      pcl::PointXYZRGB p;
+      p.x = it->x - origin.x();
+      p.y = it->y - origin.y();
+      p.z = it->z - origin.z();
+      if (it->label > 1.0) {
+        p.r = 0;
+        p.g = 255;
+        p.b = 0;
+      } else {
+        p.r = 255;
+        p.g = 0;
+        p.b = 0;
+      }
+      cloudwcolor.push_back(p);
+    }
+    Eigen::Matrix4d transform;
+    transform << 1, 0, 0, origin.x(),
+                 0, 1, 0, origin.y(),
+                 0, 0, 1, origin.z(),
+                 0, 0, 0, 1;
+    pcl::transformPointCloud(cloudwcolor, cloudwcolor, transform);
+    pcl::toROSMsg(cloudwcolor, cloud_msg);
+    cloud_msg.header.frame_id = "/map";
 }
 
 int main(int argc, char **argv) {
@@ -99,12 +130,19 @@ int main(int argc, char **argv) {
 
     la3dm::BGKOctoMap map(resolution, block_depth, 4, sf2, ell, free_thresh, occupied_thresh, var_thresh, prior_A, prior_B, prior_A);
 
+    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("/point_cloud", 1);
     ros::Time start = ros::Time::now();
     for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
         la3dm::PCLPointCloudwithLabel cloudwlabel;
         la3dm::point3f origin;
         std::string filename(dir + "/" + prefix + "_" + std::to_string(scan_id) + ".pcd");
         load_pcd(filename, origin, cloudwlabel);
+        
+        // Visualize point cloud
+        sensor_msgs::PointCloud2 cloud_msg;
+        visualize_pcd(cloudwlabel, origin, cloud_msg);
+        pub.publish(cloud_msg);
+        ros::Duration(0.5).sleep();
 
         map.insert_semantics(cloudwlabel, origin, ds_resolution, free_resolution, max_range, 4);
         
@@ -193,7 +231,6 @@ int main(int argc, char **argv) {
     }
 
     tm_pub.publish();
-
 
     ros::spin();
 
