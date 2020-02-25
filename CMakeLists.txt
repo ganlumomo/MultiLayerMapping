@@ -31,6 +31,12 @@ find_package(catkin REQUIRED COMPONENTS
         tf_conversions
 )
 
+find_package(OpenCV REQUIRED)
+find_package(PCL REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -154,6 +160,9 @@ add_executable(cassie_node
     src/bgkoctomap/cassie_node.cpp
 )
 
+add_executable(semantickitti_util
+    src/dataset_devkit/semantickitti_util.cpp)
+
 #add_executable(bgkoctomap_static_node
 #    ${BGK_SOURCE_FILES}
 #    ${COMMON_SOURCE_FILES}
@@ -174,6 +183,10 @@ target_link_libraries(bgkoctomap_semantics_node
 target_link_libraries(cassie_node
         ${catkin_LIBRARIES}
 )
+
+target_link_libraries(semantickitti_util
+        ${OpenCV_LIBS}
+        ${PCL_LIBRARIES})
 
 #target_link_libraries(bgkoctomap_static_node
 #        ${catkin_LIBRARIES}
