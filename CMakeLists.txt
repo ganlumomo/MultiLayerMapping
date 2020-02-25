@@ -161,6 +161,7 @@ add_executable(cassie_node
 )
 
 add_executable(semantickitti_util
+    ${COMMON_SOURCE_FILES}
     src/dataset_devkit/semantickitti_util.cpp)
 
 #add_executable(bgkoctomap_static_node

@@ -72,6 +72,116 @@ namespace la3dm {
       return color;
     }
 
+    std_msgs::ColorRGBA SemanticKITTISemanticMapColor(int c) {
+      std_msgs::ColorRGBA color;
+      color.a = 1.0;
+
+      switch (c) {
+        case 1:  // car
+          color.r = 245.0 / 255;
+          color.g = 150.0 / 255;
+          color.b = 100.0 / 255;
+          break;
+        case 2:  // bicycle
+          color.r = 245.0 / 255;
+          color.g = 230.0 / 255;
+          color.b = 100.0 / 255;
+          break;
+        case 3:  // motorcycle
+          color.r = 150.0 / 255;
+          color.g = 60.0 / 255;
+          color.b = 30.0 / 255;
+          break;
+        case 4:  // truck
+          color.r = 180.0 / 255;
+          color.g = 30.0 / 255;
+          color.b = 80.0 / 255;
+          break;
+        case 5:  // other-vehicle
+          color.r = 255.0 / 255;
+          color.g = 80.0 / 255;
+          color.b = 100.0 / 255;
+          break;
+        case 6:  // person
+          color.r = 30.0 / 255;
+          color.g = 30.0 / 255;
+          color.b = 1;
+          break;
+        case 7:  // bicyclist
+          color.r = 200.0 / 255;
+          color.g = 40.0 / 255;
+          color.b = 1;
+          break;
+        case 8:  // motorcyclist
+          color.r = 90.0 / 255;
+          color.g = 30.0 / 255;
+          color.b = 150.0 / 255;
+          break;
+        case 9:  // road
+          color.r = 1;
+          color.g = 0;
+          color.b = 1;
+          break;
+        case 10: // parking
+          color.r = 1;
+          color.g = 150.0 / 255;
+          color.b = 1;
+          break;
+        case 11: // sidewalk
+          color.r = 75.0 / 255;
+          color.g = 0;
+          color.b = 75.0 / 255;
+          break;
+        case 12: // other-ground
+          color.r = 75.0 / 255;
+          color.g = 0;
+          color.b = 175.0 / 255;
+          break;
+        case 13: // building
+          color.r = 0;
+          color.g = 200.0 / 255;
+          color.b = 1;
+          break;
+        case 14: // fence
+          color.r = 50.0 / 255;
+          color.g = 120.0 / 255;
+          color.b = 1;
+          break;
+        case 15: // vegetation
+          color.r = 0;
+          color.g = 175.0 / 255;
+          color.b = 0;
+          break;
+        case 16: // trunk
+          color.r = 0;
+          color.g = 60.0 / 255;
+          color.b = 135.0 / 255;
+          break;
+        case 17: // terrain
+          color.r = 80.0 / 255;
+          color.g = 240.0 / 255;
+          color.b = 150.0 / 255;
+          break;
+        case 18: // pole
+          color.r = 150.0 / 255;
+          color.g = 240.0 / 255;
+          color.b = 1;
+          break;
+        case 19: // traffic-sign
+          color.r = 0;
+          color.g = 0;
+          color.b = 1;
+          break;
+        default:
+          color.r = 1;
+          color.g = 1;
+          color.b = 1;
+          break;
+      }
+
+      return color;
+    }
+
     std_msgs::ColorRGBA NCLTSemanticMapColor(int c) {
       std_msgs::ColorRGBA color;
       color.a = 1.0;
