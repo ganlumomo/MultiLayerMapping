@@ -42,6 +42,21 @@ namespace la3dm {
       return color;
     }
 
+    std_msgs::ColorRGBA traversabilityMapColor(float t) {
+      std_msgs::ColorRGBA color;
+      color.a = 1.0;
+      if (t > 0.5) {
+        color.r = 0;
+        color.g = 1;
+        color.b = 0;
+      } else {
+        color.r = 1;
+        color.g = 0;
+        color.b = 0;
+      }
+      return color;
+    }
+
     std_msgs::ColorRGBA semanticMapColor(int c) {
       std_msgs::ColorRGBA color;
       color.a = 1.0;
@@ -383,7 +398,7 @@ namespace la3dm {
 
             //if (min_z < max_z) {
                 //double h = (1.0 - std::min(std::max((z - min_z) / (max_z - min_z), 0.0f), 1.0f)) * 0.8;
-                msg->markers[depth].colors.push_back(JetMapColor(traversability));
+                msg->markers[depth].colors.push_back(traversabilityMapColor(traversability));
             //}
         }
 

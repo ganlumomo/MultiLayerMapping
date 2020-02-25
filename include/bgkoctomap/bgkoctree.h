@@ -10,6 +10,7 @@
 namespace la3dm {
 
     typedef Semantics OcTreeNode;
+    //typedef Occupancy OcTreeNode;
 
     /// Hash key to index OcTree nodes given depth and the index in that layer.
     typedef int OcTreeHashKey;

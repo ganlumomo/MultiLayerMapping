@@ -21,6 +21,9 @@ class CassieData {
       map_ = new la3dm::BGKOctoMap(resolution, block_depth, num_class_,
                                    sf2, ell, free_thresh, occupied_thresh, var_thresh,
                                    prior_A, prior_B, prior);
+      //map_ = new la3dm::BGKOctoMap(resolution, block_depth,
+      //                            sf2, ell, free_thresh, occupied_thresh, var_thresh,
+      //                            prior_A, prior_B);
       sm_pub_ = new la3dm::MarkerArrayPub(nh_, smap_topic, resolution);
       tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
     }
@@ -108,6 +111,10 @@ class CassieData {
       origin.x() = tf_eigen.matrix()(0, 3);
       origin.y() = tf_eigen.matrix()(1, 3);
       origin.z() = tf_eigen.matrix()(2, 3);
+
+      //la3dm::PCLPointCloud cloud;
+      //process_pcd(cloudwlabel, cloud);
+      //map_->insert_pointcloud(cloud, origin, ds_resolution_, free_resolution_, max_range_);
       map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
 
       // Visualize maps
@@ -150,5 +157,15 @@ class CassieData {
     la3dm::BGKOctoMap* map_;
     la3dm::MarkerArrayPub* sm_pub_;
     la3dm::MarkerArrayPub* tm_pub_;
+
+    void process_pcd(const la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::PCLPointCloud &cloud) {
+      for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
+        la3dm::PCLPointType p;
+        p.x = it->x;
+        p.y = it->y;
+        p.z = it->z;
+        cloud.push_back(p);
+      }
+    }
 };
 

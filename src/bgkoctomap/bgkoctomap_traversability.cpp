@@ -134,12 +134,9 @@ namespace la3dm {
                         std::cout << "updating the node " << ybar[j] << " " << kbar[j] << std::endl;
                     }
 
-                    // Update traversability according to semantics
-                    node.update_traversability_with_semantics();
-
                     // Only need to update if kernel density total kernel density est > 0
                     if (kbar[j] > 0.0)
-                        node.update_traversability(ybar[j], kbar[j]);
+                      node.update_traversability(ybar[j], kbar[j]);
                 }
             }
         }
