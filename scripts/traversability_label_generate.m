@@ -52,7 +52,7 @@ end
 colored_img = rgb_img;
 for i = 1 : size(final_img, 1)
     for j = 1 : size(final_img, 2)
-        if (projection_img(i,j) == 0)
+        if (projection_img(i, j) == 0)
             %colored_img(i, j, 1) = 128;
             %colored_img(i, j, 2) = 62;
             %colored_img(i, j, 3) = 128;
