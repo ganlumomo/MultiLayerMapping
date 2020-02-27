@@ -87,6 +87,116 @@ namespace la3dm {
       return color;
     }
 
+    std_msgs::ColorRGBA KITTISemanticMapColor(int c) {
+      std_msgs::ColorRGBA color;
+      color.a = 1.0;
+
+      switch (c) {
+        case 1: // road
+          color.r = 128.0/255;
+          color.g = 64.0/255;
+          color.b = 128.0/255;
+          break;
+        case 2: // sidewalk
+          color.r = 244.0/255;
+          color.g = 35.0/255;
+          color.b = 232.0/255;
+          break;
+        case 3: // building
+          color.r = 70.0/255;
+          color.g = 70.0/255;
+          color.b = 70.0/255;
+          break;
+        case 4: // wall
+          color.r = 102.0/255;
+          color.g = 102.0/255;
+          color.b = 156.0/255;
+          break;
+        case 5: // fence
+          color.r = 190.0/255;
+          color.g = 153.0/255;
+          color.b = 153.0/255;
+          break;
+        case 6: // pole
+          color.r = 153.0/255;
+          color.g = 153.0/255;
+          color.b = 153.0/255;
+          break;
+        case 7: // traffic light
+          color.r = 250.0/255;
+          color.g = 170.0/255;
+          color.b = 30.0/255;
+          break;
+        case 8: // traffic sign
+          color.r = 220.0/255;
+          color.g = 220.0/255;
+          color.b = 0/255;
+          break;
+        case 9: // vegetation
+          color.r = 107.0/255;
+          color.g = 142.0/255;
+          color.b = 35.0/255;
+          break;
+        case 10: // terrain
+          color.r = 152.0/255;
+          color.g = 251.0/255;
+          color.b = 152.0/255;
+          break;
+        case 11: // sky
+          color.r = 70.0/255;
+          color.g = 130.0/255;
+          color.b = 180.0/255;
+          break;
+        case 12: // person
+          color.r = 220.0/255;
+          color.g = 20.0/255;
+          color.b = 60.0/255;
+          break;
+        case 13: // rider
+          color.r = 255.0/255;
+          color.g = 0/255;
+          color.b = 0/255;
+          break;
+        case 14: // car
+          color.r = 0/255;
+          color.g = 0/255;
+          color.b = 142.0/255;
+          break;
+        case 15: // truck
+          color.r = 0/255;
+          color.g = 0/255;
+          color.b = 70.0/255;
+          break;
+        case 16: // bus
+          color.r = 0/255;
+          color.g = 60.0/255;
+          color.b = 100.0/255;
+          break;
+        case 17: // train
+          color.r = 0/255;
+          color.g = 80.0/255;
+          color.b = 100.0/255;
+          break;
+        case 18: // motorcycle
+          color.r = 0/255;
+          color.g = 0/255;
+          color.b = 230.0/255;
+          break;
+        case 19: // bicycle
+          color.r = 119.0/255;
+          color.g = 11.0/255;
+          color.b = 32.0/255;
+          break;
+        default:
+          color.r = 1;
+          color.g = 1;
+          color.b = 1;
+          break;
+      }
+
+      return color;
+    }
+
     std_msgs::ColorRGBA SemanticKITTISemanticMapColor(int c) {
       std_msgs::ColorRGBA color;
       color.a = 1.0;
@@ -416,7 +526,7 @@ namespace la3dm {
 
             //if (min_z < max_z) {
                 //double h = (1.0 - std::min(std::max((z - min_z) / (max_z - min_z), 0.0f), 1.0f)) * 0.8;
-                msg->markers[depth].colors.push_back(NCLTSemanticMapColor(semantics));
+                msg->markers[depth].colors.push_back(KITTISemanticMapColor(semantics));
             //}
         }
 
