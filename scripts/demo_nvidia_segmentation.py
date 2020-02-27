@@ -37,11 +37,11 @@ traversability = {
 }
 
 parser = argparse.ArgumentParser(description='demo')
-parser.add_argument('--demo-image-folder', type=str, default='/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/05/image_2/', help='path to demo image')
+parser.add_argument('--demo-image-folder', type=str, default='/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/06/image_2/', help='path to demo image')
 parser.add_argument('--snapshot', type=str, default='/home/ganlu/semantic-segmentation/kitti_best.pth', help='pre-trained checkpoint')
 parser.add_argument('--arch', type=str, default='network.deepv3.DeepWV3Plus', help='network architecture used for inference')
-parser.add_argument('--save-dir', type=str, default='/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/05/semantic_seg/', help='path to save your results')
-parser.add_argument('--save-traversability-dir', type=str, default="/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/05/traversability_seg/", help='path to save traversability results')
+parser.add_argument('--save-dir', type=str, default='/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/06/semantic_seg/', help='path to save your results')
+parser.add_argument('--save-traversability-dir', type=str, default="/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/06/traversability_seg/", help='path to save traversability results')
 args = parser.parse_args()
 assert_and_infer_cfg(args, train_mode=False)
 cudnn.benchmark = True
@@ -89,9 +89,9 @@ for img_names in sorted(os.listdir(args.demo_image_folder)):
     traversability_label.save(os.path.join(args.save_traversability_dir, '{}'.format(img_names)))
 
     # visualize results
-    colorized = args.dataset_cls.colorize_mask(traversability_pred)
-    mask = Image.new("L", colorized.size, 128)
-    colorized_img = Image.composite(colorized, img, mask)
-    colorized_img.save(os.path.join(args.save_traversability_dir, '{}_color_mask.png'.format(img_names)))
+    #colorized = args.dataset_cls.colorize_mask(traversability_pred)
+    #mask = Image.new("L", colorized.size, 128)
+    #colorized_img = Image.composite(colorized, img, mask)
+    #colorized_img.save(os.path.join(args.save_traversability_dir, '{}_color_mask.png'.format(img_names)))
     
     print('Results saved. {}'.format(img_names))
