@@ -30,23 +30,33 @@ class KittiData {
         tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
       }
 
-    void process_scans(int scan_num, std::string depth_img_dir, std::string label_img_dir) {
+    void process_scans(int scan_num, std::string depth_img_dir, 
+                       std::string semantic_img_dir, std::string traversability_img_dir) {
       for (int scan_id = 0; scan_id <= scan_num; ++scan_id) {
         char scan_id_c[256];
         sprintf(scan_id_c, "%06d", scan_id);
         std::string scan_id_s(scan_id_c);
         std::string depth_img_name(depth_img_dir + scan_id_s + ".png");
-        std::string label_img_name(label_img_dir + scan_id_s + ".png");
+        std::string semantic_img_name(semantic_img_dir + scan_id_s + ".png");
+        std::string traversability_img_name(traversability_img_dir + scan_id_s + ".png");
 
         cv::Mat depth_img = cv::imread(depth_img_name, CV_LOAD_IMAGE_ANYDEPTH);
-        cv::Mat label_img = cv::imread(label_img_name, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat semantic_img = cv::imread(semantic_img_name, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat traversability_img = cv::imread(traversability_img_name, CV_LOAD_IMAGE_UNCHANGED);
         Eigen::Matrix4f transform = get_current_pose(scan_id);
 
         la3dm::PCLPointCloudwithLabel cloudwlabel;
         la3dm::point3f origin;
-        process_scan(depth_img, label_img, transform, cloudwlabel, origin);
+        process_scan(depth_img, semantic_img, transform, cloudwlabel, origin);
         map_->insert_semantics(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_, num_class_);
         publish_semantic_map();
+       
+        process_scan(depth_img, traversability_img, transform, cloudwlabel, origin);
+        map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
+        publish_traversability_map();
+        //cloudwlabel.width = cloudwlabel.points.size();
+        //cloudwlabel.height = 1;
+        //pcl::io::savePCDFileASCII ("test_pcd.pcd", cloudwlabel);
       }
     }
 
@@ -54,6 +64,8 @@ class KittiData {
                       la3dm::PCLPointCloudwithLabel& cloudwlabel, la3dm::point3f& origin) {
       int width = depth_img.cols;
       int height = depth_img.rows;
+      
+      cloudwlabel.points.clear();
       for (int32_t i = 0; i < width * height; ++i) {
         int ux = i % width;
         int uy = i / width;
@@ -68,7 +80,7 @@ class KittiData {
           ptl.x = (ux - cx_) * (1.0 / fx_) * pix_depth;
           ptl.y = (uy - cy_) * (1.0 / fy_) * pix_depth;
           ptl.z = pix_depth;
-          ptl.label = pix_label + 1;
+          ptl.label = pix_label;
           cloudwlabel.points.push_back(ptl);
         }
       }
@@ -124,6 +136,18 @@ class KittiData {
       }
       sm_pub_->publish();
     }
+
+    void publish_traversability_map() {
+      tm_pub_->clear();
+      for (auto it = map_->begin_leaf(); it != map_->end_leaf(); ++it) {
+        if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
+          la3dm::point3f p = it.get_loc();
+          float traversability = it.get_node().get_prob_traversability();
+          tm_pub_->insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
+        }
+      }
+      tm_pub_->publish();
+    }
    
   private:
     ros::NodeHandle nh_;
@@ -148,7 +172,6 @@ class KittiData {
       Eigen::MatrixXf curr_pose = Eigen::Map<MatrixXf_row>(curr_pose_v.data(), 3, 4);
       Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
       transform.block(0, 0, 3, 4) = curr_pose;
-      //Eigen::Matrix4f new_transform = init_trans_to_ground_ * transform;
       return transform;
     }
 };

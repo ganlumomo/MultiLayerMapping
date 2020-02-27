@@ -508,7 +508,7 @@ namespace la3dm {
 
             //if (min_z < max_z) {
                 //double h = (1.0 - std::min(std::max((z - min_z) / (max_z - min_z), 0.0f), 1.0f)) * 0.8;
-                msg->markers[depth].colors.push_back(JetMapColor(traversability));
+                msg->markers[depth].colors.push_back(traversabilityMapColor(traversability));
             //}
         }
 

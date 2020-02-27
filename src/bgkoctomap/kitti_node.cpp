@@ -40,14 +40,16 @@ int main(int argc, char **argv) {
     float depth_scaling = 1000;
     std::string camera_pose_file = "CameraTrajectory.txt";
     std::string depth_img_folder = "depth_img/";
-    std::string label_img_folder = "semantic_seg/";
+    std::string semantic_img_folder = "semantic_seg/";
+    std::string traversability_img_folder = "traversability_seg/";
 
     nh.param<int>("num_class", num_class, num_class);
     nh.param<float>("depth_scaling", depth_scaling, depth_scaling);
     nh.param<std::string>("dir", dir, dir);
     nh.param<std::string>("camera_pose_file", camera_pose_file, camera_pose_file);
     nh.param<std::string>("depth_img_folder", depth_img_folder, depth_img_folder);
-    nh.param<std::string>("label_img_folder", label_img_folder, label_img_folder);
+    nh.param<std::string>("semantic_img_folder", semantic_img_folder, semantic_img_folder);
+    nh.param<std::string>("traversability_img_folder", traversability_img_folder, traversability_img_folder);
     nh.param<std::string>("prefix", prefix, prefix);
     nh.param<std::string>("topic", map_topic, map_topic);
     nh.param<int>("scan_num", scan_num, scan_num);
@@ -74,7 +76,8 @@ int main(int argc, char **argv) {
             "dir: " << dir << std::endl <<
             "camera_pose_file: " << camera_pose_file << std::endl <<
             "depth_img_folder: " << depth_img_folder << std::endl <<
-            "label_img_folder: " << label_img_folder << std::endl <<
+            "semantic_img_folder: " << semantic_img_folder << std::endl <<
+            "traversability_img_folder: " << traversability_img_folder << std::endl <<
             "prefix: " << prefix << std::endl <<
             "topic: " << map_topic << std::endl <<
             "scan_sum: " << scan_num << std::endl <<
@@ -109,8 +112,9 @@ int main(int argc, char **argv) {
 
     // process scans
     std::string depth_img_dir(dir + depth_img_folder);
-    std::string label_img_dir(dir + label_img_folder);
-    kitti_data.process_scans(scan_num, depth_img_dir, label_img_dir);
+    std::string semantic_img_dir(dir + semantic_img_folder);
+    std::string traversability_img_dir(dir + traversability_img_folder);
+    kitti_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir);
 
     ros::spin();
 

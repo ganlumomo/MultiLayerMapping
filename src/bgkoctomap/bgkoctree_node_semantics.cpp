@@ -66,15 +66,20 @@ namespace la3dm {
     }
 
     void Semantics::update_traversability_with_semantics() {
-        if (semantics == 1)
-          tm_A += 1;
-        if (semantics > 1)
-          tm_B += 1;
+        // Toy example
+        //if (semantics == 1)
+          //tm_A += 1;
+        //if (semantics > 1)
+          //tm_B += 1;
+        
+        // Cassie exp
         //if (semantics == 2 || semantics == 3 || semantics == 4 || semantics == 11)
           //tm_A += 50;
         //if (semantics == 1 || semantics == 5 || semantics == 6 || semantics == 7 || semantics == 8 ||
            // semantics == 9 || semantics == 10 || semantics == 12 || semantics == 13)
           //tm_B += 50;
+        
+        // KITTI exp
     }
 
     void Semantics::update_traversability(float ybar, float kbar) {

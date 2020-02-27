@@ -232,7 +232,7 @@ namespace la3dm {
                 if (l > max_range)
                     continue;
             }
-            xy.emplace_back(p, it->label);
+            xy.emplace_back(p, it->label + 1);  // Note: label 0 is for free class
 
             PointCloud frees_n;
             beam_sample(p, origin, frees_n, free_resolution);
