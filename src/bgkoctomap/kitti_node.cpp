@@ -43,9 +43,14 @@ int main(int argc, char **argv) {
     std::string semantic_img_folder = "semantic_seg/";
     std::string traversability_img_folder = "traversability_seg/";
     std::string evaluation_list_file = "evaluatioList.txt";
-    std::string reproj_img_folder = "traversability_reproj/";
+    std::string reproj_traversability_folder = "traversability_reproj/";
+    std::string reproj_semantics_folder = "semantic_reproj/";
 
     nh.param<int>("num_class", num_class, num_class);
+    nh.param<float>("fx", fx, fx);
+    nh.param<float>("fy", fy, fy);
+    nh.param<float>("cx", cx, cx);
+    nh.param<float>("cy", cy, cy);
     nh.param<float>("depth_scaling", depth_scaling, depth_scaling);
     nh.param<std::string>("dir", dir, dir);
     nh.param<std::string>("traversability_img_folder", traversability_img_folder, traversability_img_folder);    
@@ -71,6 +76,10 @@ int main(int argc, char **argv) {
 
     ROS_INFO_STREAM("Parameters:" << std::endl <<
             "num_class: " << num_class << std::endl <<
+            "fx: " << fx << std::endl <<
+            "fy: " << fy << std::endl <<
+            "cx: " << cx << std::endl <<
+            "cy: " << cy << std::endl <<
             "depht_scaling: " << depth_scaling << std::endl <<
             "dir: " << dir << std::endl <<
             "traversability_img_folder: " << traversability_img_folder << std::endl << 
@@ -112,8 +121,9 @@ int main(int argc, char **argv) {
     std::string depth_img_dir(dir + depth_img_folder);
     std::string semantic_img_dir(dir + semantic_img_folder);
     std::string traversability_img_dir(dir + traversability_img_folder);
-    std::string reproj_img_dir(dir + reproj_img_folder);
-    kitti_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir, reproj_img_dir);
+    std::string reproj_traversability_dir(dir + reproj_traversability_folder);
+    std::string reproj_semantics_dir(dir + reproj_semantics_folder);
+    kitti_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir, reproj_traversability_dir, reproj_semantics_dir);
 
     ros::spin();
 

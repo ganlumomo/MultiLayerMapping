@@ -30,8 +30,8 @@ class KittiData {
         tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
       }
 
-    void process_scans(int scan_num, std::string depth_img_dir, 
-                       std::string semantic_img_dir, std::string traversability_img_dir, std::string reproj_img_dir) {
+    void process_scans(int scan_num, std::string depth_img_dir, std::string semantic_img_dir,
+                       std::string traversability_img_dir, std::string reproj_traversability_dir, std::string reproj_semantics_dir) {
       for (int scan_id = 0; scan_id <= scan_num; ++scan_id) {
         char scan_id_c[256];
         sprintf(scan_id_c, "%06d", scan_id);
@@ -64,7 +64,7 @@ class KittiData {
         //pcl::io::savePCDFileASCII ("test_pcd.pcd", cloudwlabel);
         
         // reprojection
-        reproject_imgs(scan_id, reproj_img_dir);
+        reproject_imgs(scan_id, reproj_traversability_dir, reproj_semantics_dir);
       }
     }
 
@@ -99,29 +99,32 @@ class KittiData {
       origin.z() = transform(2, 3);
     }
 
-    void reproject_imgs(const int current_scan_id, std::string reproj_img_dir) {
+    void reproject_imgs(const int current_scan_id, std::string reproj_traversability_dir, std::string reproj_semantics_dir) {
       if (check_element_in_vector(current_scan_id, evaluation_list_) < 0)
         return;
       for (int reproj_id = 0; reproj_id < evaluation_list_.rows(); ++reproj_id) {
         int scan_id = evaluation_list_[reproj_id];
         if (scan_id <= current_scan_id) {
-          cv::Mat reproj_img;
-          reproject_img(scan_id, reproj_id, reproj_img);
+          cv::Mat reproj_traversability, reproj_semantics;
+          reproject_img(scan_id, reproj_id, reproj_traversability, reproj_semantics);
           char scan_id_c[256];
           sprintf(scan_id_c, "%06d", scan_id);
           std::string scan_id_s(scan_id_c);
-          std::string reproj_img_name(reproj_img_dir + scan_id_s + ".png");
-          cv::imwrite(reproj_img_name, reproj_img);
+          std::string reproj_traversability_name(reproj_traversability_dir + scan_id_s + ".png");
+          std::string reproj_semantics_name(reproj_semantics_dir + scan_id_s + ".png");
+          cv::imwrite(reproj_traversability_name, reproj_traversability);
+          cv::imwrite(reproj_semantics_name, reproj_semantics);
         }
       }
     }
 
-    void reproject_img(const int scan_id, const int reproj_id, cv::Mat& reproj_img) {
+    void reproject_img(const int scan_id, const int reproj_id, cv::Mat& reproj_traversability, cv::Mat& reproj_semantics) {
       int width = depth_imgs_[reproj_id].cols;
       int height = depth_imgs_[reproj_id].rows;
       Eigen::Matrix4f transform = get_scan_pose(scan_id);
       
-      reproj_img = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(200));
+      reproj_traversability = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(255));
+      reproj_semantics = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(255));
       //reproj_img = cv::Mat(cv::Size(width, height), CV_8UC3, cv::Scalar(200, 200, 200));
       
       //la3dm::PCLPointCloud cloud;
@@ -144,9 +147,11 @@ class KittiData {
             //int semantics = node.get_semantics();
             float traversability = node.get_prob_traversability();
             if (traversability > 0.5)
-              reproj_img.at<uint8_t>(uy, ux) = 1;
+              reproj_traversability.at<uint8_t>(uy, ux) = 1;
             else
-              reproj_img.at<uint8_t>(uy, ux) = 0;
+              reproj_traversability.at<uint8_t>(uy, ux) = 0;
+            int semantics = node.get_semantics();
+            reproj_semantics.at<uint8_t>(uy, ux) = semantics - 1;
             //reproj_img.at<cv::Vec3b>(uy, ux)[0] = uint8_t(la3dm::traversabilityMapColor(traversability).b * 255);
             //reproj_img.at<cv::Vec3b>(uy, ux)[1] = uint8_t(la3dm::traversabilityMapColor(traversability).g * 255);
             //reproj_img.at<cv::Vec3b>(uy, ux)[2] = uint8_t(la3dm::traversabilityMapColor(traversability).r * 255);

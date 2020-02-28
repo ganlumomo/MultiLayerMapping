@@ -80,6 +80,11 @@ namespace la3dm {
           //tm_B += 50;
         
         // KITTI exp
+        if (semantics == 1 || semantics == 2 || semantics == 10)
+          tm_A += 50;
+        else if (semantics == 0) {}
+        else
+          tm_B += 50;
     }
 
     void Semantics::update_traversability(float ybar, float kbar) {
