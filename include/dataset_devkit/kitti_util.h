@@ -106,19 +106,25 @@ class KittiData {
         int scan_id = evaluation_list_[reproj_id];
         if (scan_id <= current_scan_id) {
           cv::Mat reproj_img;
-          reproject_img(scan_id, reproj_id, reproj_img, reproj_img_dir);
+          reproject_img(scan_id, reproj_id, reproj_img);
+          char scan_id_c[256];
+          sprintf(scan_id_c, "%06d", scan_id);
+          std::string scan_id_s(scan_id_c);
+          std::string reproj_img_name(reproj_img_dir + scan_id_s + ".png");
+          cv::imwrite(reproj_img_name, reproj_img);
         }
       }
     }
 
-    void reproject_img(const int scan_id, const int reproj_id, cv::Mat& reproj_img, std::string reproj_img_dir) {
-      std::cout << scan_id << " " << reproj_id << std::endl;
+    void reproject_img(const int scan_id, const int reproj_id, cv::Mat& reproj_img) {
       int width = depth_imgs_[reproj_id].cols;
       int height = depth_imgs_[reproj_id].rows;
-      reproj_img = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(255));
       Eigen::Matrix4f transform = get_scan_pose(scan_id);
       
-      la3dm::PCLPointCloud cloud;
+      //reproj_img = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(255));
+      reproj_img = cv::Mat(cv::Size(width, height), CV_8UC3, cv::Scalar(200, 200, 200));
+      
+      //la3dm::PCLPointCloud cloud;
       for (int32_t i = 0; i < width * height; ++i) {
         int ux = i % width;
         int uy = i / width;
@@ -132,28 +138,22 @@ class KittiData {
           pt.z = pix_depth;
 
           transform_pt_to_global(transform, pt);
-          cloud.push_back(pt);
+          //cloud.push_back(pt);
           la3dm::OcTreeNode node = map_->search(pt.x, pt.y, pt.z);
           if (node.get_state() == la3dm::State::OCCUPIED) {
             int semantics = node.get_semantics();
-            std::cout << semantics << std::endl;
-            reproj_img.at<uint8_t>(uy, ux) = (uint8_t) semantics - 1;
+            //reproj_img.at<uint8_t>(uy, ux) = (uint8_t) semantics - 1;
+            reproj_img.at<cv::Vec3b>(uy, ux)[0] = uint8_t(la3dm::KITTISemanticMapColor(semantics).b * 255);
+            reproj_img.at<cv::Vec3b>(uy, ux)[1] = uint8_t(la3dm::KITTISemanticMapColor(semantics).g * 255);
+            reproj_img.at<cv::Vec3b>(uy, ux)[2] = uint8_t(la3dm::KITTISemanticMapColor(semantics).r * 255);
           }
         }
       }
-        cloud.width = cloud.points.size();
-        cloud.height = 1;
-        pcl::io::savePCDFileASCII ("test_pcd.pcd", cloud);
- 
-          char scan_id_c[256];
-          sprintf(scan_id_c, "%06d", scan_id);
-          std::string scan_id_s(scan_id_c);
-          std::string reproj_img_name(reproj_img_dir + scan_id_s + ".png");
-          cv::imwrite(reproj_img_name, reproj_img);
-
+      //cloud.width = cloud.points.size();
+      //cloud.height = 1;
+      //pcl::io::savePCDFileASCII ("test_pcd.pcd", cloud);
     }
     
-
     bool read_camera_poses(const std::string camera_pose_name) {
       if (std::ifstream(camera_pose_name)) {
         std::vector<std::vector<float>> camera_poses_v;

@@ -48,6 +48,9 @@ namespace la3dm {
         Block::key_loc_map = init_key_loc_map(resolution, block_depth);
         Block::index_map = init_index_map(Block::key_loc_map, block_depth);
 
+        // Note: Bug fixed
+        Block::cell_num = static_cast<unsigned short>(round(Block::size / Block::resolution));
+
         OcTree::max_depth = block_depth;
 
         OcTreeNode::num_class = num_class;
