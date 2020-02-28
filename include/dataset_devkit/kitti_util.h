@@ -121,8 +121,8 @@ class KittiData {
       int height = depth_imgs_[reproj_id].rows;
       Eigen::Matrix4f transform = get_scan_pose(scan_id);
       
-      //reproj_img = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(255));
-      reproj_img = cv::Mat(cv::Size(width, height), CV_8UC3, cv::Scalar(200, 200, 200));
+      reproj_img = cv::Mat(cv::Size(width, height), CV_8UC1, cv::Scalar(200));
+      //reproj_img = cv::Mat(cv::Size(width, height), CV_8UC3, cv::Scalar(200, 200, 200));
       
       //la3dm::PCLPointCloud cloud;
       for (int32_t i = 0; i < width * height; ++i) {
@@ -141,11 +141,15 @@ class KittiData {
           //cloud.push_back(pt);
           la3dm::OcTreeNode node = map_->search(pt.x, pt.y, pt.z);
           if (node.get_state() == la3dm::State::OCCUPIED) {
-            int semantics = node.get_semantics();
-            //reproj_img.at<uint8_t>(uy, ux) = (uint8_t) semantics - 1;
-            reproj_img.at<cv::Vec3b>(uy, ux)[0] = uint8_t(la3dm::KITTISemanticMapColor(semantics).b * 255);
-            reproj_img.at<cv::Vec3b>(uy, ux)[1] = uint8_t(la3dm::KITTISemanticMapColor(semantics).g * 255);
-            reproj_img.at<cv::Vec3b>(uy, ux)[2] = uint8_t(la3dm::KITTISemanticMapColor(semantics).r * 255);
+            //int semantics = node.get_semantics();
+            float traversability = node.get_prob_traversability();
+            if (traversability > 0.5)
+              reproj_img.at<uint8_t>(uy, ux) = 1;
+            else
+              reproj_img.at<uint8_t>(uy, ux) = 0;
+            //reproj_img.at<cv::Vec3b>(uy, ux)[0] = uint8_t(la3dm::traversabilityMapColor(traversability).b * 255);
+            //reproj_img.at<cv::Vec3b>(uy, ux)[1] = uint8_t(la3dm::traversabilityMapColor(traversability).g * 255);
+            //reproj_img.at<cv::Vec3b>(uy, ux)[2] = uint8_t(la3dm::traversabilityMapColor(traversability).r * 255);
           }
         }
       }

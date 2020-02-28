@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     nh.param<int>("num_class", num_class, num_class);
     nh.param<float>("depth_scaling", depth_scaling, depth_scaling);
     nh.param<std::string>("dir", dir, dir);
+    nh.param<std::string>("traversability_img_folder", traversability_img_folder, traversability_img_folder);    
     nh.param<std::string>("prefix", prefix, prefix);
     nh.param<std::string>("topic", map_topic, map_topic);
     nh.param<int>("scan_num", scan_num, scan_num);
@@ -72,6 +73,7 @@ int main(int argc, char **argv) {
             "num_class: " << num_class << std::endl <<
             "depht_scaling: " << depth_scaling << std::endl <<
             "dir: " << dir << std::endl <<
+            "traversability_img_folder: " << traversability_img_folder << std::endl << 
             "prefix: " << prefix << std::endl <<
             "topic: " << map_topic << std::endl <<
             "scan_sum: " << scan_num << std::endl <<
