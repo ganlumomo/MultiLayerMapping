@@ -42,14 +42,12 @@ int main(int argc, char **argv) {
     std::string depth_img_folder = "depth_img/";
     std::string semantic_img_folder = "semantic_seg/";
     std::string traversability_img_folder = "traversability_seg/";
+    std::string evaluation_list_file = "evaluatioList.txt";
+    std::string reproj_img_folder = "traversability_reproj/";
 
     nh.param<int>("num_class", num_class, num_class);
     nh.param<float>("depth_scaling", depth_scaling, depth_scaling);
     nh.param<std::string>("dir", dir, dir);
-    nh.param<std::string>("camera_pose_file", camera_pose_file, camera_pose_file);
-    nh.param<std::string>("depth_img_folder", depth_img_folder, depth_img_folder);
-    nh.param<std::string>("semantic_img_folder", semantic_img_folder, semantic_img_folder);
-    nh.param<std::string>("traversability_img_folder", traversability_img_folder, traversability_img_folder);
     nh.param<std::string>("prefix", prefix, prefix);
     nh.param<std::string>("topic", map_topic, map_topic);
     nh.param<int>("scan_num", scan_num, scan_num);
@@ -74,10 +72,6 @@ int main(int argc, char **argv) {
             "num_class: " << num_class << std::endl <<
             "depht_scaling: " << depth_scaling << std::endl <<
             "dir: " << dir << std::endl <<
-            "camera_pose_file: " << camera_pose_file << std::endl <<
-            "depth_img_folder: " << depth_img_folder << std::endl <<
-            "semantic_img_folder: " << semantic_img_folder << std::endl <<
-            "traversability_img_folder: " << traversability_img_folder << std::endl <<
             "prefix: " << prefix << std::endl <<
             "topic: " << map_topic << std::endl <<
             "scan_sum: " << scan_num << std::endl <<
@@ -106,15 +100,18 @@ int main(int argc, char **argv) {
         prior_A, prior_B, prior,
         ds_resolution, free_resolution, max_range);
 
-    // read camera poses
+    // preprocessing data
     std::string camera_pose_name(dir + camera_pose_file);
     kitti_data.read_camera_poses(camera_pose_name);
+    std::string evaluation_list_name(dir + evaluation_list_file);
+    kitti_data.read_evaluation_list(evaluation_list_name);
 
     // process scans
     std::string depth_img_dir(dir + depth_img_folder);
     std::string semantic_img_dir(dir + semantic_img_folder);
     std::string traversability_img_dir(dir + traversability_img_folder);
-    kitti_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir);
+    std::string reproj_img_dir(dir + reproj_img_folder);
+    kitti_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir, reproj_img_dir);
 
     ros::spin();
 

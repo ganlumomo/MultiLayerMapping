@@ -5,7 +5,7 @@ topic: /semantic_map
 dir: /media/ganlu/PERL-SSD/00000IROS2020/kitti/data_kitti_05/
 
 # Information about range-finder data
-scan_num: 1 # How many scans to use
+scan_num: 40 # How many scans to use
 max_range: -1 # Sensor max range (m)
 
 # Bounds on map height
