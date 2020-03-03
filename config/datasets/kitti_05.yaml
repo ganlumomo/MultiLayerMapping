@@ -6,8 +6,8 @@ dir: /media/ganlu/PERL-SSD/00000IROS2020/kitti/data_kitti_05/
 traversability_img_folder: test_results/
 
 # Information about range-finder data
-scan_num: 900 # How many scans to use
-max_range: -1 # Sensor max range (m)
+scan_num: 805 # How many scans to use
+max_range: 20 # Sensor max range (m)
 
 # Bounds on map height
 min_z: 0
