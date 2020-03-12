@@ -2,10 +2,10 @@ import os
 import numpy as np
 from PIL import Image
 
-img_traversability_seg_dir = "/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/06/traversability_seg/"
-img_traversability_proj_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/06/traversability_new/"
-img_traversability_final_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/06/traversability_gt_new/"
-img_list = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/06/traversability_new/list.txt"
+img_traversability_seg_dir = "/home/ganlu/media/PERL-SSD/data_odometry_color/dataset/sequences/07/traversability_seg/"
+img_traversability_proj_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/traversability_new/"
+img_traversability_final_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/traversability_gt_new/"
+img_list = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/traversability_new/list.txt"
 img_list = np.loadtxt(img_list)
 
 for img_id in img_list:
