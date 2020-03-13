@@ -2,9 +2,9 @@ import os
 import numpy as np
 from PIL import Image
 
-img_rgb_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/image_2/"
-img_traversability_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/traversability_gt_new/"
-img_list = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/07/traversability_new/list.txt"
+img_rgb_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/10/image_2/"
+img_traversability_dir = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/10/traversability_gt_new/"
+img_list = "/home/ganlu/media/PERL-SSD/Datasets/KITTI/dataset/sequences/10/traversability_new/list.txt"
 img_list = np.loadtxt(img_list)
 
 palette = [255, 0, 0, 0, 255, 0]
