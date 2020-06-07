@@ -530,6 +530,26 @@ namespace la3dm {
             //}
         }
 
+
+        void insert_point3d_variance(float x, float y, float z, float min_v, float max_v, float size, float var) {
+            geometry_msgs::Point center;
+            center.x = x;
+            center.y = y;
+            center.z = z;
+
+            int depth = 0;
+            if (size > 0)
+                    depth = (int) log2(size / 0.1);
+
+            float middle = (max_v + min_v) / 2;
+            var = (var - middle) / (middle - min_v);
+            //std::cout << var << std::endl;
+            msg->markers[depth].points.push_back(center);
+            msg->markers[depth].colors.push_back(JetMapColor(var));
+
+        }
+
+
         void insert_point3d(float x, float y, float z, float min_z, float max_z, float size) {
             geometry_msgs::Point center;
             center.x = x;

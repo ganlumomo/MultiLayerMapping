@@ -71,7 +71,11 @@ namespace la3dm {
         /// Get probability of occupancy.
         void get_probs(std::vector<float>& probs) const;
 
+        void get_vars(std::vector<float>& vars) const;
+
         float get_prob_traversability() const;
+
+        float get_var_traversability() const;
 
         /// Get variance of occupancy (uncertainty)
         //inline float get_var() const { return (m_A * m_B) / ( (m_A + m_B) * (m_A + m_B) * (m_A + m_B + 1.0f)); }

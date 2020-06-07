@@ -5,6 +5,11 @@
 
 typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_row;
 
+float max_semantic_var = std::numeric_limits<float>::min();
+float min_semantic_var = std::numeric_limits<float>::max();
+float max_traversability_var = std::numeric_limits<float>::min();
+float min_traversability_var = std::numeric_limits<float>::max();
+
 class KittiData {
   public:
     KittiData(ros::NodeHandle& nh, std::string smap_topic, std::string tmap_topic,
@@ -28,6 +33,8 @@ class KittiData {
                                      prior_A, prior_B, prior);
         sm_pub_ = new la3dm::MarkerArrayPub(nh_, smap_topic, resolution);
         tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
+        sv_pub_ = new la3dm::MarkerArrayPub(nh_, "semantic_variance_map", resolution);
+        tv_pub_ = new la3dm::MarkerArrayPub(nh_, "traversability_variance_map", resolution);
       }
 
     void process_scans(int scan_num, std::string depth_img_dir, std::string semantic_img_dir,
@@ -55,10 +62,12 @@ class KittiData {
         process_scan(depth_img, semantic_img, transform, cloudwlabel, origin);
         map_->insert_semantics(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_, num_class_);
         publish_semantic_map();
+        publish_semantic_variance_map();
        
         process_scan(depth_img, traversability_img, transform, cloudwlabel, origin);
         map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
         publish_traversability_map();
+        publish_traversability_variance_map();
         //cloudwlabel.width = cloudwlabel.points.size();
         //cloudwlabel.height = 1;
         //pcl::io::savePCDFileASCII ("test_pcd.pcd", cloudwlabel);
@@ -233,10 +242,32 @@ class KittiData {
         if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
           la3dm::point3f p = it.get_loc();
           int semantics = it.get_node().get_semantics();
+          std::vector<float> vars(num_class_);
+          it.get_node().get_vars(vars);
+          if (vars[semantics] > max_semantic_var)
+            max_semantic_var = vars[semantics];
+          if (vars[semantics] < min_semantic_var)
+            min_semantic_var = vars[semantics];
           sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
         }
       }
       sm_pub_->publish();
+      std::cout << "max_semantic_var: " << max_semantic_var << std::endl;
+      std::cout << "min_semantic_var: " << min_semantic_var << std::endl;
+    }
+
+    void publish_semantic_variance_map() {
+      sv_pub_->clear();
+       for (auto it = map_->begin_leaf(); it != map_->end_leaf(); ++it) {
+        if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
+          la3dm::point3f p = it.get_loc();
+          int semantics = it.get_node().get_semantics();
+          std::vector<float> vars(num_class_);
+          it.get_node().get_vars(vars);
+          sv_pub_->insert_point3d_variance(p.x(), p.y(), p.z(), 0, max_semantic_var, it.get_size(), vars[semantics]);
+        }
+      }
+      sv_pub_->publish();
     }
 
     void publish_traversability_map() {
@@ -245,10 +276,29 @@ class KittiData {
         if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
           la3dm::point3f p = it.get_loc();
           float traversability = it.get_node().get_prob_traversability();
+          float var = it.get_node().get_var_traversability();
+          if (var > max_traversability_var)
+            max_traversability_var = var;
+          if (var < min_traversability_var)
+            min_traversability_var = var;
           tm_pub_->insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
         }
       }
       tm_pub_->publish();
+      std::cout << "max_traversability_var: " << max_traversability_var << std::endl;
+      std::cout << "min_traversability_var: " << min_traversability_var << std::endl;
+   }
+
+    void publish_traversability_variance_map() {
+      tv_pub_->clear();
+      for (auto it = map_->begin_leaf(); it != map_->end_leaf(); ++it) {
+        if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
+          la3dm::point3f p = it.get_loc();
+          float var = it.get_node().get_var_traversability();
+          tv_pub_->insert_point3d_variance(p.x(), p.y(), p.z(), 0, max_traversability_var, it.get_size(), var);
+        }
+      }
+      tv_pub_->publish();
     }
    
   private:
@@ -270,6 +320,8 @@ class KittiData {
     la3dm::BGKOctoMap* map_;
     la3dm::MarkerArrayPub* sm_pub_;
     la3dm::MarkerArrayPub* tm_pub_;
+    la3dm::MarkerArrayPub* sv_pub_;
+    la3dm::MarkerArrayPub* tv_pub_;
 
     int check_element_in_vector(const int element, const Eigen::VectorXi& vec_check) {
       for (int i = 0; i < vec_check.rows(); ++i)

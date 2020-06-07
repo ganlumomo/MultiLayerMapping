@@ -38,8 +38,21 @@ namespace la3dm {
           probs[i] = ms[i] / sum;
     }
 
+    void Semantics::get_vars(std::vector<float>& vars) const {
+      assert (vars.size() == num_class);
+      float sum = 0;
+      for (auto m : ms)
+        sum += m;
+      for (int i = 0; i < num_class; ++i)
+        vars[i] = ((ms[i] / sum) - (ms[i] / sum) * (ms[i] / sum)) / (sum + 1.0f);
+    }
+
     float Semantics::get_prob_traversability() const {
         return tm_A / (tm_A + tm_B);
+    }
+
+    float Semantics::get_var_traversability() const {
+        return (tm_A * tm_B) / ( (tm_A + tm_B) * (tm_A + tm_B) * (tm_A + tm_B + 1.0f));
     }
 
     void Semantics::update(std::vector<float>& ybars) {
