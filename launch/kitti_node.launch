@@ -3,7 +3,7 @@
     <!-- Sets up an la3dm node with parameters specified by args -->
     <!-- See la3dm/config/methods/bgkoctomap.yaml for config parameters -->
     <arg name="method" default="bgkoctomap"/>
-    <arg name="dataset" default="kitti_05"/>
+    <arg name="dataset" default="kitti_15"/>
     <arg name="method_config" value="$(find la3dm)/config/methods"/>
     <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
 
