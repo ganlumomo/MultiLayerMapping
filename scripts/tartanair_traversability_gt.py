@@ -45,7 +45,7 @@ def colorize_mask(mask):
     return new_mask
 
 
-seq_dir = '/media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/abandonedfactory/Easy/P000/'
+seq_dir = '/media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/abandonedfactory/Easy/P008/'
 rgb_img_dir = seq_dir + 'image_left/'
 semantic_gt_dir = seq_dir + 'seg_left/'
 traversability_gt_dir = seq_dir + 'traversability_new/'

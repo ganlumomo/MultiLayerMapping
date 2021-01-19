@@ -171,6 +171,16 @@ add_executable(kitti_node
     src/bgkoctomap/kitti_node.cpp
 )
 
+add_executable(tartanair_node 
+    ${BGK_SOURCE_FILES}
+    ${COMMON_SOURCE_FILES}
+    #    src/bgkoctomap/bgkoctomap_occupancy.cpp
+    src/bgkoctomap/bgkoctree_node_semantics.cpp
+    src/bgkoctomap/bgkoctomap_semantics.cpp
+    src/bgkoctomap/bgkoctomap_traversability.cpp
+    src/bgkoctomap/tartanair_node.cpp
+)
+
 add_executable(semantickitti_util
     ${COMMON_SOURCE_FILES}
     src/dataset_devkit/semantickitti_util.cpp)
@@ -197,6 +207,11 @@ target_link_libraries(cassie_node
 )
 
 target_link_libraries(kitti_node
+        ${OpenCV_LIBS}
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(tartanair_node
         ${OpenCV_LIBS}
         ${catkin_LIBRARIES}
 )
