@@ -29,6 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
         pcl_ros
         roscpp
         tf_conversions
+	cv_bridge
 )
 
 find_package(OpenCV REQUIRED)

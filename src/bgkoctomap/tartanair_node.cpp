@@ -123,7 +123,8 @@ int main(int argc, char **argv) {
     std::string traversability_img_dir(dir + traversability_img_folder);
     std::string reproj_traversability_dir(dir + reproj_traversability_folder);
     std::string reproj_semantics_dir(dir + reproj_semantics_folder);
-    tartanair_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir, reproj_traversability_dir, reproj_semantics_dir);
+    std::string rgb_img_dir(dir + "image_left/");
+    tartanair_data.process_scans(scan_num, depth_img_dir, semantic_img_dir, traversability_img_dir, reproj_traversability_dir, reproj_semantics_dir, rgb_img_dir);
 
     ros::spin();
 

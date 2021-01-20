@@ -2,6 +2,7 @@
 
 #include <opencv/cv.hpp>
 #include <pcl/common/transforms.h>
+#include <cv_bridge/cv_bridge.h>
 
 typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_row;
 
@@ -38,7 +39,8 @@ class TartanAirData {
       }
 
     void process_scans(int scan_num, std::string depth_img_dir, std::string semantic_img_dir,
-                       std::string traversability_img_dir, std::string reproj_traversability_dir, std::string reproj_semantics_dir) {
+                       std::string traversability_img_dir, std::string reproj_traversability_dir, std::string reproj_semantics_dir,
+		       std::string rgb_img_dir) {
       for (int scan_id = 2; scan_id <= scan_num; ++scan_id) {
         char scan_id_c[256];
         sprintf(scan_id_c, "%06d", scan_id);
@@ -46,6 +48,15 @@ class TartanAirData {
         std::string depth_img_name(depth_img_dir + scan_id_s + "_left_depth.png");
         std::string semantic_img_name(semantic_img_dir + scan_id_s + "_left.png");
         std::string traversability_img_name(traversability_img_dir + scan_id_s + "_left.png");
+	std::string rgb_img_name(rgb_img_dir + scan_id_s + "_left.png");
+	
+	// publish rgb images
+	cv_bridge::CvImage cv_img;
+	cv_img.image = cv::imread(rgb_img_name, CV_LOAD_IMAGE_COLOR);
+	cv_img.encoding = "bgr8";
+	sensor_msgs::Image ros_img;
+	cv_img.toImageMsg(ros_img);
+	rgb_pub_.publish(ros_img);
 
         cv::Mat depth_img = cv::imread(depth_img_name, CV_LOAD_IMAGE_ANYDEPTH);
         // save depth img if reproject current scan
@@ -322,6 +333,7 @@ class TartanAirData {
     la3dm::MarkerArrayPub* tm_pub_;
     la3dm::MarkerArrayPub* sv_pub_;
     la3dm::MarkerArrayPub* tv_pub_;
+    ros::Publisher rgb_pub_ = nh_.advertise<sensor_msgs::Image>("/rgb_image", 1);
 
     int check_element_in_vector(const int element, const Eigen::VectorXi& vec_check) {
       for (int i = 0; i < vec_check.rows(); ++i)
