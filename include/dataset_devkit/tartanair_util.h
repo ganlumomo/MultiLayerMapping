@@ -248,7 +248,7 @@ class TartanAirData {
             max_semantic_var = vars[semantics];
           if (vars[semantics] < min_semantic_var)
             min_semantic_var = vars[semantics];
-          sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
+          sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics-1, it.get_size());
         }
       }
       sm_pub_->publish();
@@ -337,20 +337,24 @@ class TartanAirData {
       q.y() = curr_pose_v(4);
       q.z() = curr_pose_v(5);
       q.w() = curr_pose_v(6);
-
+      
       Eigen::Matrix4f transform = Eigen::Matrix4f::Identity();
       transform(0, 3) = curr_pose_v(0);
       transform(1, 3) = curr_pose_v(1);
       transform(2, 3) = curr_pose_v(2);
       transform.block(0, 0, 3, 3) = q.normalized().toRotationMatrix();
       
+      Eigen::Matrix4f init_trans_to_ground;
+      init_trans_to_ground << 1, 0, 0, 0,
+			      0, 0, 1, 0,
+			      0, -1, 0, 1,
+			      0, 0, 0, 1;
       Eigen::Matrix4f T;
       T << 0, 1, 0, 0,
 	   0, 0, 1, 0,
 	   1, 0, 0, 0,
 	   0, 0, 0, 1;
-
-      Eigen::Matrix4f new_transform = T * transform * T.inverse();
+      Eigen::Matrix4f new_transform = init_trans_to_ground * T * transform * T.inverse();
       
       return new_transform;
     }

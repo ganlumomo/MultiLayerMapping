@@ -1,5 +1,5 @@
 # sim_unstructured config
-num_class: 255
+num_class: 256
 fx: 320.0
 fy: 320.0
 cx: 320.0
@@ -10,7 +10,7 @@ dir: /media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/abandonedfactory/Eas
 traversability_img_folder: traversability_gt/
 
 # Information about range-finder data
-scan_num: 100 # How many scans to use
+scan_num: 1000 # How many scans to use
 max_range: 15 # Sensor max range (m)
 
 # Bounds on map height
