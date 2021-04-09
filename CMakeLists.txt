@@ -15,7 +15,7 @@ endif()
 add_definitions(-DOPENMP)
 
 ## Enable Debug Info
-add_definitions(-DDEBUG)
+#add_definitions(-DDEBUG)
 
 # add_definitions(-DPREDICT)
 

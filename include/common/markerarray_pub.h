@@ -203,139 +203,151 @@ namespace la3dm {
 
       switch (c) {
         case 13: // road
-          color.r = 242.0/255;
-          color.g = 107.0/255;
-          color.b = 146.0/255;
+          color.r = 156.0/255;
+          color.g = 198.0/255;
+          color.b = 23.0/255;
           break;
         case 64: // sidewalk
-          color.r = 1.0/255;
-          color.g = 222.0/255;
-          color.b = 192.0/255;
+          color.r = 99.0/255;
+          color.g = 242.0/255;
+          color.b = 104.0/255;
           break;
         case 96: // building
-          color.r = 15.0/255;
-          color.g = 241.0/255;
-          color.b = 102.0/255;
+          color.r = 93.0/255;
+          color.g = 14.0/255;
+          color.b = 71.0/255;
           break;
         case 110: // wall
-          color.r = 3.0/255;
-          color.g = 177.0/255;
-          color.b = 32.0/255;
+          color.r = 40.0/255;
+          color.g = 63.0/255;
+          color.b = 99.0/255;
           break;
         case 129: // fence
-          color.r = 239.0/255;
-          color.g = 85.0/255;
-          color.b = 20.0/255;
+          color.r = 108.0/255;
+          color.g = 116.0/255;
+          color.b = 224.0/255;
           break;
         case 137: // pole
-          color.r = 198.0/255;
-          color.g = 180.0/255;
-          color.b = 122.0/255;
+          color.r = 201.0/255;
+          color.g = 144.0/255;
+          color.b = 169.0/255;
           break;
         case 152: // traffic light
-          color.r = 159.0/255;
-          color.g = 58.0/255;
-          color.b = 173.0/255;
-          break;
-        case 153: // traffic sign
           color.r = 17.0/255;
           color.g = 91.0/255;
           color.b = 237.0/255;
           break;
+        case 153: // traffic sign
+          color.r = 31.0/255;
+          color.g = 95.0/255;
+          color.b = 84.0/255;
+          break;
         case 160: // vegetation
-          color.r = 238.0/255;
-          color.g = 228.0/255;
-          color.b = 154.0/255;
+          color.r = 61.0/255;
+          color.g = 212.0/255;
+          color.b = 54.0/255;
           break;
         case 163: // terrain
-          color.r = 141.0/255;
-          color.g = 174.0/255;
-          color.b = 0/255;
-          break;
-        case 164: // sky
           color.r = 140.0/255;
           color.g = 167.0/255;
           color.b = 255.0/255;
           break;
+        case 164: // sky
+          color.r = 117.0/255;
+          color.g = 93.0/255;
+          color.b = 91.0/255;
+          break;
         case 167: // person
-          color.r = 165.0/255;
-          color.g = 28.0/255;
-          color.b = 61.0/255;
+          color.r = 144.0/255;
+          color.g = 238.0/255;
+          color.b = 194.0/255;
           break;
         case 178: // rider
-          color.r = 2.0/255;
-          color.g = 185.0/255;
-          color.b = 62.0/255;
+          color.r = 138.0/255;
+          color.g = 223.0/255;
+          color.b = 226.0/255;
           break;
         case 184: // car
-          color.r = 248.0/255;
-          color.g = 44.0/255;
-          color.b = 10.0/255;
+          color.r = 83.0/255;
+          color.g = 82.0/255;
+          color.b = 52.0/255;
           break;
         case 196: // truck
-          color.r = 209.0/255;
-          color.g = 247.0/255;
-          color.b = 202.0/255;
-          break;
-        case 197: // bus
           color.r = 80.0/255;
           color.g = 205.0/255;
           color.b = 152.0/255;
           break;
-        case 199: // train
-          color.r = 27.0/255;
-          color.g = 8.0/255;
-          color.b = 38.0/255;
+        case 197: // bus
+          color.r = 178.0/255;
+          color.g = 221.0/255;
+          color.b = 213.0/255;
           break;
-        case 200: // motorcycle
+        case 199: // train
           color.r = 244.0/255;
           color.g = 117.0/255;
           color.b = 51.0/255;
           break;
+        case 200: // motorcycle
+          color.r = 107.0/255;
+          color.g = 68.0/255;
+          color.b = 190.0/255;
+          break;
+	case 205:
+	  color.r = 105.0/255;
+	  color.g = 127.0/255;
+	  color.b = 176.0/255;
+	case 207:
+	  color.r = 172.0/255;
+	  color.g = 172.0/255;
+	  color.b = 138.0/255;
+	case 220:
+	  color.r = 60.0/255;
+	  color.g = 138.0/255;
+	  color.b = 96.0/255;
         case 222: // bicycle
-          color.r = 210.0/255;
-          color.g = 96.0/255;
-          color.b = 94.0/255;
+          color.r = 123.0/255;
+          color.g = 48.0/255;
+          color.b = 18.0/255;
           break;
         case 226: // bicycle
-          color.r = 39.0/255;
-          color.g = 219.0/255;
-          color.b = 151.0/255;
-          break;
-        case 227: // bicycle
           color.r = 204.0/255;
           color.g = 143.0/255;
           color.b = 135.0/255;
           break;
+        case 227: // bicycle
+          color.r = 249.0/255;
+          color.g = 79.0/255;
+          color.b = 73.0/255;
+          break;
        case 230: // bicycle
-          color.r = 41.0/255;
-          color.g = 246.0/255;
-          color.b = 77.0/255;
+          color.r = 16.0/255;
+          color.g = 154.0/255;
+          color.b = 4.0/255;
           break;
        case 244: // bicycle
-          color.r = 32.0/255;
-          color.g = 151.0/255;
-          color.b = 196.0/255;
-          break;
-       case 245: // bicycle
           color.r = 213.0/255;
           color.g = 220.0/255;
           color.b = 89.0/255;
           break;
-       case 246: // bicycle
+       case 245: // bicycle
           color.r = 70.0/255;
           color.g = 209.0/255;
           color.b = 228.0/255;
           break;
+       case 246: // bicycle
+          color.r = 97.0/255;
+          color.g = 184.0/255;
+          color.b = 83.0/255;
+          break;
        case 250: // bicycle
-          color.r = 193.0/255;
-          color.g = 11.0/255;
-          color.b = 245.0/255;
+          color.r = 38.0/255;
+          color.g = 27.0/255;
+          color.b = 159.0/255;
           break;
        case 252: // bicycle
-          color.r = 229.0/255;
-          color.g = 141.0/255;
-          color.b = 203.0/255;
+          color.r = 130.0/255;
+          color.g = 56.0/255;
+          color.b = 55.0/255;
           break;
      default:
           color.r = 1;

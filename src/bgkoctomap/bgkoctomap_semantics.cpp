@@ -184,7 +184,7 @@ namespace la3dm {
                     // Only need to update if kernel density total kernel density est > 0
                     //if (kbar[j] > 0.0)
                         node.update(ybars[j]);
-                        //node.update_traversability_with_semantics();
+			//node.update_traversability_with_semantics();
                 }
             }
         }
@@ -221,8 +221,8 @@ namespace la3dm {
 
     void BGKOctoMap::get_training_data_semantics(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
                                       float free_resolution, float max_range, GPPointCloud &xy) const {
-	      PCLPointCloudwithLabel sampled_hits;
-        downsample(cloud, sampled_hits, ds_resolution);
+	PCLPointCloudwithLabel sampled_hits;
+	downsample(cloud, sampled_hits, ds_resolution);
 
         PCLPointCloud frees;
         frees.height = 1;
@@ -235,7 +235,7 @@ namespace la3dm {
                 if (l > max_range)
                     continue;
             }
-            xy.emplace_back(p, it->label + 1);  // Note: label 0 is for free class
+            xy.emplace_back(p, it->label);  // Note: label 0 is for free class
 
             PointCloud frees_n;
             beam_sample(p, origin, frees_n, free_resolution);

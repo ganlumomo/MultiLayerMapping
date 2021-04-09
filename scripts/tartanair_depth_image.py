@@ -6,7 +6,7 @@ import numpy as np
 depth_scale = 2000
 uint16_max = 65535
 
-seq_dir = '/media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/abandonedfactory/Easy/P000/'
+seq_dir = '/media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/abandonedfactory/Easy/P001/'
 depth_img_dir = seq_dir + 'depth_left/'
 
 for file_name in os.listdir(depth_img_dir):

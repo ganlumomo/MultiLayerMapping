@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <algorithm>
+#include <list>
 
 namespace la3dm {
 
@@ -58,8 +59,17 @@ namespace la3dm {
     void Semantics::update(std::vector<float>& ybars) {
         assert (ybars.size() == num_class);
         classified = true;
-        for (int k = 0; k < num_class; ++k)
+        
+	// TartanAir exp
+	std::list<int> untraversable = {13, 96, 110, 129, 137, 153, 164, 167, 178, 184, 196, 199, 200, 220, 227, 245, 246, 250};
+	std::list<int> traversable = {64, 197, 205, 207, 222};
+	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};
+
+	for (int k = 0; k < num_class; ++k) {
           ms[k] += ybars[k];
+	  if (find(untraversable.begin(), untraversable.end(), k) != untraversable.end())
+	    tm_B += ybars[k];
+	}
 
         //float var = get_var();
         //if (var > Occupancy::var_thresh)
@@ -93,11 +103,21 @@ namespace la3dm {
           //tm_B += 50;
         
         // KITTI exp
-        if (semantics == 1 || semantics == 2 || semantics == 10)
+        /*if (semantics == 1 || semantics == 2 || semantics == 10)
           tm_A += 50;
         else if (semantics == 0) {}
         else
-          tm_B += 50;
+          tm_B += 50;*/
+
+	// TartanAir exp
+	std::list<int> untraversable = {13, 96, 110, 129, 137, 153, 164, 167, 178, 184, 196, 199, 200, 220, 227, 245, 246, 250};
+	std::list<int> traversable = {64, 197, 205, 207, 222};
+	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};
+	if (find(untraversable.begin(), untraversable.end(), semantics) != untraversable.end()) {
+	  tm_B += 1;
+	} else if (find(traversable.begin(), traversable.end(), semantics) != traversable.end()) {
+	  tm_A += 1;
+	}
     }
 
     void Semantics::update_traversability(float ybar, float kbar) {

@@ -41,8 +41,9 @@ class TartanAirData {
     void process_scans(int scan_num, std::string depth_img_dir, std::string semantic_img_dir,
                        std::string traversability_img_dir, std::string reproj_traversability_dir, std::string reproj_semantics_dir,
 		       std::string rgb_img_dir) {
-      for (int scan_id = 2; scan_id <= scan_num; ++scan_id) {
-        char scan_id_c[256];
+      for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
+	std::cout << "processing " << scan_id << "/" << scan_num << std::endl;
+	char scan_id_c[256];
         sprintf(scan_id_c, "%06d", scan_id);
         std::string scan_id_s(scan_id_c);
         std::string depth_img_name(depth_img_dir + scan_id_s + "_left_depth.png");
@@ -60,9 +61,9 @@ class TartanAirData {
 
         cv::Mat depth_img = cv::imread(depth_img_name, CV_LOAD_IMAGE_ANYDEPTH);
         // save depth img if reproject current scan
-        //int reproj_id = check_element_in_vector(scan_id, evaluation_list_);
-        //if (reproj_id >= 0)
-          //depth_imgs_.push_back(depth_img);
+        int reproj_id = check_element_in_vector(scan_id, evaluation_list_);
+        if (reproj_id >= 0)
+          depth_imgs_.push_back(depth_img);
 
         cv::Mat semantic_img = cv::imread(semantic_img_name, CV_LOAD_IMAGE_UNCHANGED);
         cv::Mat traversability_img = cv::imread(traversability_img_name, CV_LOAD_IMAGE_UNCHANGED);
@@ -73,18 +74,19 @@ class TartanAirData {
         process_scan(depth_img, semantic_img, transform, cloudwlabel, origin);
         map_->insert_semantics(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_, num_class_);
         publish_semantic_map();
-        //publish_semantic_variance_map();
+        publish_semantic_variance_map();
        
         process_scan(depth_img, traversability_img, transform, cloudwlabel, origin);
         map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
         publish_traversability_map();
-        //publish_traversability_variance_map();
+        publish_traversability_variance_map();
         //cloudwlabel.width = cloudwlabel.points.size();
         //cloudwlabel.height = 1;
         //pcl::io::savePCDFileASCII ("test_pcd.pcd", cloudwlabel);
         
         // reprojection
-        //reproject_imgs(scan_id, reproj_traversability_dir, reproj_semantics_dir);
+	if (scan_id == scan_num)
+          reproject_imgs(scan_id, reproj_traversability_dir, reproj_semantics_dir);
       }
     }
 
@@ -171,7 +173,7 @@ class TartanAirData {
             else
               reproj_traversability.at<uint8_t>(uy, ux) = 0;
             int semantics = node.get_semantics();
-            reproj_semantics.at<uint8_t>(uy, ux) = semantics - 1;
+            reproj_semantics.at<uint8_t>(uy, ux) = semantics;
             //reproj_img.at<cv::Vec3b>(uy, ux)[0] = uint8_t(la3dm::traversabilityMapColor(traversability).b * 255);
             //reproj_img.at<cv::Vec3b>(uy, ux)[1] = uint8_t(la3dm::traversabilityMapColor(traversability).g * 255);
             //reproj_img.at<cv::Vec3b>(uy, ux)[2] = uint8_t(la3dm::traversabilityMapColor(traversability).r * 255);
@@ -259,7 +261,7 @@ class TartanAirData {
             max_semantic_var = vars[semantics];
           if (vars[semantics] < min_semantic_var)
             min_semantic_var = vars[semantics];
-          sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics-1, it.get_size());
+          sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
         }
       }
       sm_pub_->publish();

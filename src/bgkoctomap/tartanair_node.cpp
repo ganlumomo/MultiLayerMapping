@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     std::string depth_img_folder = "depth_left/";
     std::string semantic_img_folder = "seg_left/";
     std::string traversability_img_folder = "traversability_gt/";
-    std::string evaluation_list_file = "evaluatioList.txt";
+    std::string evaluation_list_file = "evaluation_list.txt";
     std::string reproj_traversability_folder = "traversability_reproj/";
     std::string reproj_semantics_folder = "semantic_reproj/";
 
@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
     nh.param<float>("cy", cy, cy);
     nh.param<float>("depth_scaling", depth_scaling, depth_scaling);
     nh.param<std::string>("dir", dir, dir);
+    nh.param<std::string>("semantic_img_folder", semantic_img_folder, semantic_img_folder);
     nh.param<std::string>("traversability_img_folder", traversability_img_folder, traversability_img_folder);    
     nh.param<std::string>("prefix", prefix, prefix);
     nh.param<std::string>("topic", map_topic, map_topic);
@@ -82,6 +83,7 @@ int main(int argc, char **argv) {
             "cy: " << cy << std::endl <<
             "depht_scaling: " << depth_scaling << std::endl <<
             "dir: " << dir << std::endl <<
+	    "semantic_img_folder: " << semantic_img_folder << std::endl << 
             "traversability_img_folder: " << traversability_img_folder << std::endl << 
             "prefix: " << prefix << std::endl <<
             "topic: " << map_topic << std::endl <<
@@ -115,7 +117,7 @@ int main(int argc, char **argv) {
     std::string camera_pose_name(dir + camera_pose_file);
     tartanair_data.read_camera_poses(camera_pose_name);
     std::string evaluation_list_name(dir + evaluation_list_file);
-    //tartanair_data.read_evaluation_list(evaluation_list_name);
+    tartanair_data.read_evaluation_list(evaluation_list_name);
 
     // process scans
     std::string depth_img_dir(dir + depth_img_folder);
