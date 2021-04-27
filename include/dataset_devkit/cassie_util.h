@@ -5,6 +5,11 @@
 #include <tf_conversions/tf_eigen.h>
 #include <pcl/common/transforms.h>
 
+float max_semantic_var = std::numeric_limits<float>::min();
+float min_semantic_var = std::numeric_limits<float>::max();
+float max_traversability_var = std::numeric_limits<float>::min();
+float min_traversability_var = std::numeric_limits<float>::max();
+
 class CassieData {
   public:
     CassieData(ros::NodeHandle& nh, std::string static_frame, std::string smap_topic, std::string tmap_topic,
@@ -26,6 +31,8 @@ class CassieData {
       //                            prior_A, prior_B);
       sm_pub_ = new la3dm::MarkerArrayPub(nh_, smap_topic, resolution);
       tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
+      sv_pub_ = new la3dm::MarkerArrayPub(nh_, "semantic_variance_map", resolution);
+      tv_pub_ = new la3dm::MarkerArrayPub(nh_, "traversability_variance_map", resolution);
     }
 
     void SemanticPointCloudCallback(const sensor_msgs::PointCloudConstPtr& cloud_msg) {
@@ -72,6 +79,7 @@ class CassieData {
 
       // Visualize maps
       publish_semantic_map();
+      publish_semantic_variance_map();
 
     }
 
@@ -119,6 +127,7 @@ class CassieData {
 
       // Visualize maps
       publish_traversability_map();
+      publish_traversability_variance_map();
     }
 
     void publish_semantic_map() {
@@ -128,9 +137,32 @@ class CassieData {
           la3dm::point3f p = it.get_loc();
           int semantics = it.get_node().get_semantics();
           sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
+	  // get variance
+	  std::vector<float> vars(num_class_);
+	  it.get_node().get_vars(vars);
+	  if (vars[semantics] > max_semantic_var)
+	    max_semantic_var = vars[semantics];
+          if (vars[semantics] < min_semantic_var)
+            min_semantic_var = vars[semantics];
         }
       }
       sm_pub_->publish();
+      std::cout << "max_semantic_var: " << max_semantic_var << std::endl;
+      std::cout << "min_semantic_var: " << min_semantic_var << std::endl;
+    }
+
+    void publish_semantic_variance_map() {
+      sv_pub_->clear();
+      for (auto it = map_->begin_leaf(); it != map_->end_leaf(); ++it) {
+        if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
+          la3dm::point3f p = it.get_loc();
+          int semantics = it.get_node().get_semantics();
+          std::vector<float> vars(num_class_);
+          it.get_node().get_vars(vars);
+          sv_pub_->insert_point3d_variance(p.x(), p.y(), p.z(), 0, max_semantic_var, it.get_size(), vars[semantics]);
+        }
+      }
+      sv_pub_->publish();
     }
 
     void publish_traversability_map() {
@@ -140,9 +172,29 @@ class CassieData {
           la3dm::point3f p = it.get_loc();
           float traversability = it.get_node().get_prob_traversability();
           tm_pub_->insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
+	  // get variance
+	  float var = it.get_node().get_var_traversability();
+	  if (var > max_traversability_var)
+            max_traversability_var = var;
+          if (var < min_traversability_var)
+            min_traversability_var = var;
         }
       }
       tm_pub_->publish();
+      std::cout << "max_traversability_var: " << max_traversability_var << std::endl;
+      std::cout << "min_traversability_var: " << min_traversability_var << std::endl;
+    }
+
+    void publish_traversability_variance_map() {
+      tv_pub_->clear();
+      for (auto it = map_->begin_leaf(); it != map_->end_leaf(); ++it) {
+        if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
+          la3dm::point3f p = it.get_loc();
+          float var = it.get_node().get_var_traversability();
+          tv_pub_->insert_point3d_variance(p.x(), p.y(), p.z(), 0, max_traversability_var, it.get_size(), var);
+        }
+      }
+      tv_pub_->publish();
     }
 
   private:
@@ -157,6 +209,8 @@ class CassieData {
     la3dm::BGKOctoMap* map_;
     la3dm::MarkerArrayPub* sm_pub_;
     la3dm::MarkerArrayPub* tm_pub_;
+    la3dm::MarkerArrayPub* sv_pub_;
+    la3dm::MarkerArrayPub* tv_pub_;
 
     void process_pcd(const la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::PCLPointCloud &cloud) {
       for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {

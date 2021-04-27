@@ -60,15 +60,21 @@ namespace la3dm {
         assert (ybars.size() == num_class);
         classified = true;
         
+	// Cassie exp
+	/*std::list<int> untraversable = {1, 5, 6, 7, 8, 9, 10, 12, 13};
+	std::list<int> traversable = {2, 3, 4, 11};
+
 	// TartanAir exp
 	std::list<int> untraversable = {13, 96, 110, 129, 137, 153, 164, 167, 178, 184, 196, 199, 200, 220, 227, 245, 246, 250};
 	std::list<int> traversable = {64, 197, 205, 207, 222};
-	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};
+	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};*/
 
 	for (int k = 0; k < num_class; ++k) {
           ms[k] += ybars[k];
-	  if (find(untraversable.begin(), untraversable.end(), k) != untraversable.end())
+	  /*if (find(untraversable.begin(), untraversable.end(), k) != untraversable.end())
 	    tm_B += ybars[k];
+	  else if (find(traversable.begin(), traversable.end(), k) != traversable.end())
+            tm_A += ybars[k];*/
 	}
 
         //float var = get_var();
@@ -91,33 +97,26 @@ namespace la3dm {
     void Semantics::update_traversability_with_semantics() {
         // Toy example
         //if (semantics == 1)
-          //tm_A += 1;
+          //tm_A += ms[semantics];
         //if (semantics > 1)
-          //tm_B += 1;
+          //tm_B += ms[semantics];
         
         // Cassie exp
-        //if (semantics == 2 || semantics == 3 || semantics == 4 || semantics == 11)
-          //tm_A += 50;
-        //if (semantics == 1 || semantics == 5 || semantics == 6 || semantics == 7 || semantics == 8 ||
-           // semantics == 9 || semantics == 10 || semantics == 12 || semantics == 13)
-          //tm_B += 50;
+	std::list<int> untraversable = {1, 5, 6, 7, 8, 9, 10, 12, 13};
+	std::list<int> traversable = {2, 3, 4, 11};
         
         // KITTI exp
-        /*if (semantics == 1 || semantics == 2 || semantics == 10)
-          tm_A += 50;
-        else if (semantics == 0) {}
-        else
-          tm_B += 50;*/
+	/*std::list<int> traversable = {1, 2, 10};
+	std::list<int> unsure = {0};
 
 	// TartanAir exp
 	std::list<int> untraversable = {13, 96, 110, 129, 137, 153, 164, 167, 178, 184, 196, 199, 200, 220, 227, 245, 246, 250};
 	std::list<int> traversable = {64, 197, 205, 207, 222};
-	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};
-	if (find(untraversable.begin(), untraversable.end(), semantics) != untraversable.end()) {
-	  tm_B += 1;
-	} else if (find(traversable.begin(), traversable.end(), semantics) != traversable.end()) {
-	  tm_A += 1;
-	}
+	std::list<int> unsure = {152, 160, 163, 226, 230, 244, 252};*/
+	if (find(untraversable.begin(), untraversable.end(), semantics) != untraversable.end())
+	  tm_B += ms[semantics];
+	else if (find(traversable.begin(), traversable.end(), semantics) != traversable.end())
+          tm_A += ms[semantics];
     }
 
     void Semantics::update_traversability(float ybar, float kbar) {
