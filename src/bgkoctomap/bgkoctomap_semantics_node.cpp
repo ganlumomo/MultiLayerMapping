@@ -43,7 +43,7 @@ void visualize_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::point3f or
                  0, 0, 0, 1;
     pcl::transformPointCloud(cloudwcolor, cloudwcolor, transform);
     pcl::toROSMsg(cloudwcolor, cloud_msg);
-    cloud_msg.header.frame_id = "map";
+    cloud_msg.header.frame_id = "odom";
 }
 
 int main(int argc, char **argv) {
