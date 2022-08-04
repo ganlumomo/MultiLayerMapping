@@ -79,6 +79,7 @@ class TartanAirData {
         process_scan_traversability(depth_img, traversability_img, transform, cloudwlabel, origin);
         la3dm::PCLPointCloudwithLabel new_cloudwlabel;
 	map_->get_training_data_semantic_traversability(cloudwlabel, new_cloudwlabel);
+	map_->insert_traversability(new_cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
 	map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
         publish_traversability_map();
         publish_traversability_variance_map();
