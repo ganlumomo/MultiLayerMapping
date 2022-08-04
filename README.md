@@ -1,5 +1,9 @@
 # MultiLayerMapping
 
+
+[![Multi-Task Learning for Scalable and Dense Multi-Layer Bayesian Map Inference](https://raw.githubusercontent.com/ganlumomo/MultiLayerMapping/master/image.png)](https://www.youtube.com/watch?v=WnFUGLBmHzc)
+
+
 ## Getting Started
 
 ### Building with catkin
@@ -51,15 +55,15 @@ Multi-Task Learning for Scalable and Dense Multi-Layer Bayesian Map Inference ([
 Bayesian Spatial Kernel Smoothing for Scalable Dense Semantic Mapping ([PDF](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8954837))
 ```
 @ARTICLE{gan2019bayesian,
-author={L. {Gan} and R. {Zhang} and J. W. {Grizzle} and R. M. {Eustice} and M. {Ghaffari}},
-journal={IEEE Robotics and Automation Letters},
-title={Bayesian Spatial Kernel Smoothing for Scalable Dense Semantic Mapping},
-year={2020},
-volume={5},
-number={2},
-pages={790-797},
-keywords={Mapping;semantic scene understanding;range sensing;RGB-D perception},
-doi={10.1109/LRA.2020.2965390},
-ISSN={2377-3774},
-month={April},}
+  author={L. {Gan} and R. {Zhang} and J. W. {Grizzle} and R. M. {Eustice} and M. {Ghaffari}},
+  journal={IEEE Robotics and Automation Letters},
+  title={Bayesian Spatial Kernel Smoothing for Scalable Dense Semantic Mapping},
+  year={2020},
+  volume={5},
+  number={2},
+  pages={790-797},
+  keywords={Mapping;semantic scene understanding;range sensing;RGB-D perception},
+  doi={10.1109/LRA.2020.2965390},
+  ISSN={2377-3774},
+  month={April},}
 ```
