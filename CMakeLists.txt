@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(la3dm)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -o3")
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -17,7 +16,7 @@ add_definitions(-DOPENMP)
 ## Enable Debug Info
 #add_definitions(-DDEBUG)
 
-# add_definitions(-DPREDICT)
+#add_definitions(-DPREDICT)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -139,11 +138,19 @@ set(COMMON_SOURCE_FILES src/common/point3f)
 set(BGK_SOURCE_FILES
     src/bgkoctomap/bgkblock.cpp
     src/bgkoctomap/bgkoctomap.cpp
-    src/bgkoctomap/bgkoctree_node.cpp
     src/bgkoctomap/bgkoctree.cpp)
 
+#add_definitions(-DOCCUPANCY)
+#add_executable(bgkoctomap_static_node
+#    ${BGK_SOURCE_FILES}
+#    ${COMMON_SOURCE_FILES}
+#    src/bgkoctomap/bgkoctree_node.cpp
+#    src/bgkoctomap/bgkoctomap_occupancy.cpp
+#    src/bgkoctomap/bgkoctomap_static_node.cpp
+#)
 
-add_executable(bgkoctomap_semantics_node 
+add_definitions(-DSEMANTICS)
+add_executable(bgkoctomap_semantics_node
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
     src/bgkoctomap/bgkoctree_node_semantics.cpp
@@ -152,30 +159,27 @@ add_executable(bgkoctomap_semantics_node
     src/bgkoctomap/bgkoctomap_semantics_node.cpp
 )
 
-add_executable(cassie_node 
+add_executable(cassie_node
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
-    #    src/bgkoctomap/bgkoctomap_occupancy.cpp
     src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctomap_semantics.cpp
     src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/cassie_node.cpp
 )
 
-add_executable(kitti_node 
+add_executable(kitti_node
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
-    #    src/bgkoctomap/bgkoctomap_occupancy.cpp
     src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctomap_semantics.cpp
     src/bgkoctomap/bgkoctomap_traversability.cpp
     src/bgkoctomap/kitti_node.cpp
 )
 
-add_executable(tartanair_node 
+add_executable(tartanair_node
     ${BGK_SOURCE_FILES}
     ${COMMON_SOURCE_FILES}
-    #    src/bgkoctomap/bgkoctomap_occupancy.cpp
     src/bgkoctomap/bgkoctree_node_semantics.cpp
     src/bgkoctomap/bgkoctomap_semantics.cpp
     src/bgkoctomap/bgkoctomap_traversability.cpp
@@ -184,21 +188,18 @@ add_executable(tartanair_node
 
 add_executable(semantickitti_util
     ${COMMON_SOURCE_FILES}
-    src/dataset_devkit/semantickitti_util.cpp)
-
-#add_executable(bgkoctomap_static_node
-#    ${BGK_SOURCE_FILES}
-#    ${COMMON_SOURCE_FILES}
-#    src/bgkoctomap/bgkoctomap_occupancy.cpp
-#    src/bgkoctomap/bgkoctomap_traversability.cpp
-#    src/bgkoctomap/bgkoctomap_static_node.cpp
-#)
+    src/dataset_devkit/semantickitti_util.cpp
+)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(BGKOctoMap_node BGKOctoMap_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
+#target_link_libraries(bgkoctomap_static_node
+#        ${catkin_LIBRARIES}
+#)
+
 target_link_libraries(bgkoctomap_semantics_node
         ${catkin_LIBRARIES}
 )
@@ -219,11 +220,8 @@ target_link_libraries(tartanair_node
 
 target_link_libraries(semantickitti_util
         ${OpenCV_LIBS}
-        ${PCL_LIBRARIES})
-
-#target_link_libraries(bgkoctomap_static_node
-#        ${catkin_LIBRARIES}
-#)
+        ${PCL_LIBRARIES}
+)
 
 #############
 ## Install ##

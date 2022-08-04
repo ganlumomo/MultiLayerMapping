@@ -18,21 +18,6 @@ void load_pcd(std::string filename, la3dm::point3f &origin, la3dm::PCLPointCloud
     origin.z() = _origin[2];
 }
 
-void process_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::PCLPointCloud &cloud) {
-    for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
-      la3dm::PCLPointType p;
-      p.x = it->x;
-      p.y = it->y;
-      p.z = it->z;
-      cloud.push_back(p);
-      // class 1: floor
-      // class 2: wall
-      // class 3: cylinder
-      if (it->label > 1.0)
-        it->label = 0;
-    }
-}
-
 void visualize_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::point3f origin, sensor_msgs::PointCloud2 &cloud_msg) {
     pcl::PointCloud<pcl::PointXYZRGB> cloudwcolor;
     for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
@@ -58,7 +43,7 @@ void visualize_pcd(la3dm::PCLPointCloudwithLabel &cloudwlabel, la3dm::point3f or
                  0, 0, 0, 1;
     pcl::transformPointCloud(cloudwcolor, cloudwcolor, transform);
     pcl::toROSMsg(cloudwcolor, cloud_msg);
-    cloud_msg.header.frame_id = "/map";
+    cloud_msg.header.frame_id = "map";
 }
 
 int main(int argc, char **argv) {
@@ -69,7 +54,7 @@ int main(int argc, char **argv) {
     std::string prefix;
     int scan_num = 0;
     std::string map_topic("/semantic_map");
-    std::string traversability_map_topic("/traversability_map");
+    std::string tmap_topic("/semantic_traversability_map");
     double max_range = -1;
     double resolution = 0.1;
     int block_depth = 4;
@@ -79,16 +64,12 @@ int main(int argc, char **argv) {
     double ds_resolution = 0.1;
     double free_thresh = 0.3;
     double occupied_thresh = 0.7;
-    double min_z = 0;
-    double max_z = 0;
-    bool original_size = false;
     float var_thresh = 1.0f;
     float prior_A = 1.0f;
     float prior_B = 1.0f;
 
     nh.param<std::string>("dir", dir, dir);
     nh.param<std::string>("prefix", prefix, prefix);
-    nh.param<std::string>("topic", map_topic, map_topic);
     nh.param<int>("scan_num", scan_num, scan_num);
     nh.param<double>("max_range", max_range, max_range);
     nh.param<double>("resolution", resolution, resolution);
@@ -99,9 +80,6 @@ int main(int argc, char **argv) {
     nh.param<double>("ds_resolution", ds_resolution, ds_resolution);
     nh.param<double>("free_thresh", free_thresh, free_thresh);
     nh.param<double>("occupied_thresh", occupied_thresh, occupied_thresh);
-    nh.param<double>("min_z", min_z, min_z);
-    nh.param<double>("max_z", max_z, max_z);
-    nh.param<bool>("original_size", original_size, original_size);
     nh.param<float>("var_thresh", var_thresh, var_thresh);
     nh.param<float>("prior_A", prior_A, prior_A);
     nh.param<float>("prior_B", prior_B, prior_B);
@@ -109,7 +87,6 @@ int main(int argc, char **argv) {
     ROS_INFO_STREAM("Parameters:" << std::endl <<
             "dir: " << dir << std::endl <<
             "prefix: " << prefix << std::endl <<
-            "topic: " << map_topic << std::endl <<
             "scan_sum: " << scan_num << std::endl <<
             "max_range: " << max_range << std::endl <<
             "resolution: " << resolution << std::endl <<
@@ -120,9 +97,6 @@ int main(int argc, char **argv) {
             "ds_resolution: " << ds_resolution << std::endl <<
             "free_thresh: " << free_thresh << std::endl <<
             "occupied_thresh: " << occupied_thresh << std::endl <<
-            "min_z: " << min_z << std::endl <<
-            "max_z: " << max_z << std::endl <<
-            "original_size: " << original_size << std::endl <<
             "var_thresh: " << var_thresh << std::endl <<
             "prior_A: " << prior_A << std::endl <<
             "prior_B: " << prior_B
@@ -146,9 +120,10 @@ int main(int argc, char **argv) {
 
         map.insert_semantics(cloudwlabel, origin, ds_resolution, free_resolution, max_range, 4);
         
-        la3dm::PCLPointCloud cloud;
-        process_pcd(cloudwlabel, cloud);
-        map.insert_traversability(cloudwlabel, origin, ds_resolution, free_resolution, max_range);
+	// Build semantic traversability map
+	la3dm::PCLPointCloudwithLabel new_cloudwlabel;
+        map.get_training_data_semantic_traversability(cloudwlabel, new_cloudwlabel);
+	map.insert_traversability(new_cloudwlabel, origin, ds_resolution, free_resolution, max_range);
         ROS_INFO_STREAM("Scan " << scan_id << " done");
     }
     ros::Time end = ros::Time::now();
@@ -186,50 +161,24 @@ int main(int argc, char **argv) {
 
     ///////// Publish Map /////////////////////
     la3dm::MarkerArrayPub m_pub(nh, map_topic, 0.1f);
-    if (min_z == max_z) {
-        la3dm::point3f lim_min, lim_max;
-        map.get_bbox(lim_min, lim_max);
-        min_z = lim_min.z();
-        max_z = lim_max.z();
-    }
     for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
       if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
-            if (original_size) {
-                la3dm::point3f p = it.get_loc();
-                int semantics = it.get_node().get_semantics();
-                m_pub.insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
-            } else {
-                auto pruned = it.get_pruned_locs();
-                for (auto n = pruned.cbegin(); n < pruned.cend(); ++n)
-                    m_pub.insert_point3d(n->x(), n->y(), n->z(), min_z, max_z, map.get_resolution());
-            }
-        }
+	la3dm::point3f p = it.get_loc();
+	int semantics = it.get_node().get_semantics();
+	m_pub.insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
+      }
     }
-
     m_pub.publish();
 
     ///////// Publish Map /////////////////////
-    la3dm::MarkerArrayPub tm_pub(nh, traversability_map_topic, 0.1f);
-    if (min_z == max_z) {
-        la3dm::point3f lim_min, lim_max;
-        map.get_bbox(lim_min, lim_max);
-        min_z = lim_min.z();
-        max_z = lim_max.z();
-    }
+    la3dm::MarkerArrayPub tm_pub(nh, tmap_topic, 0.1f);
     for (auto it = map.begin_leaf(); it != map.end_leaf(); ++it) {
       if (it.get_node().get_state() == la3dm::State::OCCUPIED) {
-            if (original_size) {
-                la3dm::point3f p = it.get_loc();
-                float traversability = it.get_node().get_prob_traversability();
-                tm_pub.insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
-            } else {
-                auto pruned = it.get_pruned_locs();
-                for (auto n = pruned.cbegin(); n < pruned.cend(); ++n)
-                  tm_pub.insert_point3d(n->x(), n->y(), n->z(), min_z, max_z, map.get_resolution());
-            }
-        }
+	la3dm::point3f p = it.get_loc();
+	float traversability = it.get_node().get_prob_traversability();
+	tm_pub.insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
+      }
     }
-
     tm_pub.publish();
 
     ros::spin();

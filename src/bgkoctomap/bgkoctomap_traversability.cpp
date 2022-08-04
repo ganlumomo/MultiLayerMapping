@@ -173,11 +173,28 @@ namespace la3dm {
 
     void BGKOctoMap::get_training_data_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
                                       float free_resolution, float max_range, GPPointCloud &xy) const {
-        xy.clear();
-        for (auto it = cloud.begin(); it != cloud.end(); ++it) {
+        PCLPointCloudwithLabel sampled_hits;
+	downsample(cloud, sampled_hits, ds_resolution);
+	xy.clear();
+        for (auto it = sampled_hits.begin(); it != sampled_hits.end(); ++it) {
           point3f p(it->x, it->y, it->z);
           xy.emplace_back(p, it->label);
         }
     }
 
+    void BGKOctoMap::get_training_data_semantic_traversability(const la3dm::PCLPointCloudwithLabel &cloudwlabel, 
+		                                               PCLPointCloudwithLabel &new_cloudwlabel) {
+	for (auto it = cloudwlabel.begin(); it != cloudwlabel.end(); ++it) {
+	  PCLPointwithLabel p;
+	  p.x = it->x;
+          p.y = it->y;
+          p.z = it->z;
+	  OcTreeNode node = search(it->x, it->y, it->z);
+          if (node.get_state() == State::OCCUPIED) {
+            node.get_semantic_traversability();
+            p.label = node.get_meas_semantic_traversability();
+            new_cloudwlabel.push_back(p);
+          }
+       }
+    }
 }

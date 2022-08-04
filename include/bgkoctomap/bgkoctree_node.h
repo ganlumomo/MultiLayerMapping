@@ -31,13 +31,7 @@ namespace la3dm {
         /*
          * @brief Constructors and destructor.
          */
-        Occupancy() : 
-          m_A(Occupancy::prior_A), 
-          m_B(Occupancy::prior_B), 
-          state(State::UNKNOWN), 
-          tm_A(Occupancy::prior_A),
-          tm_B(Occupancy::prior_B) { 
-            classified = false; }
+        Occupancy() : m_A(Occupancy::prior_A), m_B(Occupancy::prior_B), state(State::UNKNOWN) { classified = false; }
 
         Occupancy(float A, float B);
 
@@ -59,12 +53,8 @@ namespace la3dm {
          */
         void update(float ybar, float kbar);
 
-        void update_traversability(float ybar, float kbar);
-
         /// Get probability of occupancy.
         float get_prob() const;
-
-        float get_prob_traversability() const;
 
         /// Get variance of occupancy (uncertainty)
         inline float get_var() const { return (m_A * m_B) / ( (m_A + m_B) * (m_A + m_B) * (m_A + m_B + 1.0f)); }
@@ -86,7 +76,6 @@ namespace la3dm {
         bool classified;
 
     private:
-        // For occupancy
         float m_A;
         float m_B;
         State state;
@@ -100,13 +89,9 @@ namespace la3dm {
         static float free_thresh;     // FREE occupancy threshold
         static float occupied_thresh; // OCCUPIED occupancy threshold
         static float var_thresh;
-
-        // For traversability
-        float tm_A;
-        float tm_B;
     };
 
-    //typedef Occupancy OcTreeNode;
+    typedef Occupancy OcTreeNode;
 }
 
 #endif // LA3DM_BGK_OCCUPANCY_H

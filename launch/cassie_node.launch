@@ -8,7 +8,7 @@
     <arg name="data_config" value="$(find la3dm)/config/datasets/"/>
 
     <!--Start the LA3DM node -->
-    <node pkg="la3dm" type="cassie_node" name="cassie_node" output="screen" launch-prefix="gdb -ex run --args">
+    <node pkg="la3dm" type="cassie_node" name="cassie_node" output="screen">
 
         <!-- Load method configuration from file -->
         <rosparam file="$(arg method_config)/$(arg method).yaml" command="load"/>

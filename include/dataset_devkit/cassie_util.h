@@ -26,9 +26,6 @@ class CassieData {
       map_ = new la3dm::BGKOctoMap(resolution, block_depth, num_class_,
                                    sf2, ell, free_thresh, occupied_thresh, var_thresh,
                                    prior_A, prior_B, prior);
-      //map_ = new la3dm::BGKOctoMap(resolution, block_depth,
-      //                            sf2, ell, free_thresh, occupied_thresh, var_thresh,
-      //                            prior_A, prior_B);
       sm_pub_ = new la3dm::MarkerArrayPub(nh_, smap_topic, resolution);
       tm_pub_ = new la3dm::MarkerArrayPub(nh_, tmap_topic, resolution);
       sv_pub_ = new la3dm::MarkerArrayPub(nh_, "semantic_variance_map", resolution);
@@ -76,10 +73,13 @@ class CassieData {
       origin.y() = tf_eigen.matrix()(1, 3);
       origin.z() = tf_eigen.matrix()(2, 3);
       map_->insert_semantics(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_, num_class_);
+      la3dm::PCLPointCloudwithLabel new_cloudwlabel;
+      map_->get_training_data_semantic_traversability(cloudwlabel, new_cloudwlabel);
+      map_->insert_traversability(new_cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
 
       // Visualize maps
       publish_semantic_map();
-      publish_semantic_variance_map();
+      //publish_semantic_variance_map();
 
     }
 
@@ -119,15 +119,11 @@ class CassieData {
       origin.x() = tf_eigen.matrix()(0, 3);
       origin.y() = tf_eigen.matrix()(1, 3);
       origin.z() = tf_eigen.matrix()(2, 3);
-
-      //la3dm::PCLPointCloud cloud;
-      //process_pcd(cloudwlabel, cloud);
-      //map_->insert_pointcloud(cloud, origin, ds_resolution_, free_resolution_, max_range_);
       map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
 
       // Visualize maps
       publish_traversability_map();
-      publish_traversability_variance_map();
+      //publish_traversability_variance_map();
     }
 
     void publish_semantic_map() {
@@ -137,6 +133,7 @@ class CassieData {
           la3dm::point3f p = it.get_loc();
           int semantics = it.get_node().get_semantics();
           sm_pub_->insert_point3d_semantics(p.x(), p.y(), p.z(), semantics, it.get_size());
+	  /*
 	  // get variance
 	  std::vector<float> vars(num_class_);
 	  it.get_node().get_vars(vars);
@@ -144,11 +141,12 @@ class CassieData {
 	    max_semantic_var = vars[semantics];
           if (vars[semantics] < min_semantic_var)
             min_semantic_var = vars[semantics];
+	  */
         }
       }
       sm_pub_->publish();
-      std::cout << "max_semantic_var: " << max_semantic_var << std::endl;
-      std::cout << "min_semantic_var: " << min_semantic_var << std::endl;
+      //std::cout << "max_semantic_var: " << max_semantic_var << std::endl;
+      //std::cout << "min_semantic_var: " << min_semantic_var << std::endl;
     }
 
     void publish_semantic_variance_map() {
@@ -172,17 +170,19 @@ class CassieData {
           la3dm::point3f p = it.get_loc();
           float traversability = it.get_node().get_prob_traversability();
           tm_pub_->insert_point3d_traversability(p.x(), p.y(), p.z(), traversability, it.get_size());
+	  /*
 	  // get variance
 	  float var = it.get_node().get_var_traversability();
 	  if (var > max_traversability_var)
             max_traversability_var = var;
           if (var < min_traversability_var)
             min_traversability_var = var;
+	  */
         }
       }
       tm_pub_->publish();
-      std::cout << "max_traversability_var: " << max_traversability_var << std::endl;
-      std::cout << "min_traversability_var: " << min_traversability_var << std::endl;
+      //std::cout << "max_traversability_var: " << max_traversability_var << std::endl;
+      //std::cout << "min_traversability_var: " << min_traversability_var << std::endl;
     }
 
     void publish_traversability_variance_map() {

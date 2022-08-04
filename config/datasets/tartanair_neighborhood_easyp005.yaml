@@ -1,15 +1,16 @@
-num_class: 20
-fx: 7.188560000000e+02
-fy: 7.188560000000e+02
-cx: 6.071928000000e+02
-cy: 1.852157000000e+02
+num_class: 18
+fx: 320.0
+fy: 320.0
+cx: 320.0
+cy: 240.0
 depth_scaling: 2000
 topic: /semantic_map
-dir: /media/ganlu/PERL-SSD/00000IROS2020/kitti/data_kitti_15/
-traversability_img_folder: traversability/
+dir: /media/ganlu/Samsung_T5/000_tro2020/tartanair-release1/neighborhood/Easy/P005/
+semantic_img_folder: semantic_pred/
+traversability_img_folder: traversability_pred/
 
 # Information about range-finder data
-scan_num: 100 # How many scans to use
+scan_num: 687 # How many scans to use
 max_range: 15 # Sensor max range (m)
 
 # Bounds on map height

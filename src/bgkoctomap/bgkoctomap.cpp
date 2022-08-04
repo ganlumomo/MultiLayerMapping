@@ -69,7 +69,7 @@ namespace la3dm {
         sor.setLeafSize(ds_resolution, ds_resolution, ds_resolution);
         sor.filter(out);
     }
-    
+
     void BGKOctoMap::downsample(const PCLPointCloudwithLabel &in, PCLPointCloudwithLabel &out, float ds_resolution) const {
         if (ds_resolution < 0) {
             out = in;

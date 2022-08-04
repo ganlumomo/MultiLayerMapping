@@ -5,27 +5,22 @@
 #include <fstream>
 #include <vector>
 
-#include "bgkoctree_node.h"
-
 namespace la3dm {
-
+    
+    /// Semantics state: before pruning: FREE, OCCUPIED, UNKNOWN; after pruning: PRUNED
+    enum class State : char {
+        FREE, OCCUPIED, UNKNOWN, PRUNED
+    };
+    
     /*
-     * @brief Inference ouputs and occupancy state.
+     * @brief Inference ouputs and semantics state.
      *
-     * Occupancy has member variables: m_A and m_B (kernel densities of positive
-     * and negative class, respectively) and State.
      * Before using this class, set the static member variables first.
      */
     class Semantics {
 
-        //friend std::ostream &operator<<(std::ostream &os, const Occupancy &oc);
-
-        //friend std::ofstream &operator<<(std::ofstream &os, const Occupancy &oc);
-
-        //friend std::ifstream &operator>>(std::ifstream &is, Occupancy &oc);
-
         friend class BGKOctoMap;
-
+        
     public:
         /*
          * @brief Constructors and destructor.
@@ -34,17 +29,19 @@ namespace la3dm {
           ms(std::vector<float>(num_class, prior)),
           state(State::UNKNOWN), 
           tm_A(Semantics::prior_A),
-          tm_B(Semantics::prior_B) { 
+          tm_B(Semantics::prior_B),
+	  stm_A(0),
+	  stm_B(0) { 
             classified = false; }
-
-        //Occupancy(float A, float B);
 
         Semantics(const Semantics &other) : 
           ms(other.ms),
           state(other.state),
           semantics(other.semantics),
           tm_A(other.tm_A), 
-          tm_B(other.tm_B) { }
+          tm_B(other.tm_B),
+	  stm_A(0),
+	  stm_B(0) { }
 
         Semantics &operator=(const Semantics &other) {
             ms = other.ms;
@@ -52,6 +49,8 @@ namespace la3dm {
             semantics = other.semantics;
             tm_A = other.tm_A;
             tm_B = other.tm_B;
+	    stm_A = 0;
+	    stm_B = 0;
             return *this;
         }
 
@@ -64,11 +63,9 @@ namespace la3dm {
          */
         void update(std::vector<float>& ybars);
         
-        void update_traversability_with_semantics();
-
         void update_traversability(float ybar, float kbar);
-
-        /// Get probability of occupancy.
+        
+	/// Get probability of occupancy.
         void get_probs(std::vector<float>& probs) const;
 
         void get_vars(std::vector<float>& vars) const;
@@ -76,13 +73,16 @@ namespace la3dm {
         float get_prob_traversability() const;
 
         float get_var_traversability() const;
+        
+	void get_semantic_traversability();
 
-        /// Get variance of occupancy (uncertainty)
-        //inline float get_var() const { return (m_A * m_B) / ( (m_A + m_B) * (m_A + m_B) * (m_A + m_B + 1.0f)); }
+	float get_prob_semantic_traversability() const;
+
+	int get_meas_semantic_traversability() const;
 
         /*
-         * @brief Get occupancy state of the node.
-         * @return occupancy state (see State).
+         * @brief Get semantics state of the node.
+         * @return semantics state (see State).
          */
         inline State get_state() const { return state; }
 
@@ -90,11 +90,6 @@ namespace la3dm {
 
         /// Prune current node; set state to PRUNED.
         inline void prune() { state = State::PRUNED; }
-
-        /// Only FREE and OCCUPIED nodes can be equal.
-        /*inline bool operator==(const Occupancy &rhs) const {
-            return this->state != State::UNKNOWN && this->state == rhs.state;
-        }*/
 
         bool classified;
 
@@ -117,10 +112,16 @@ namespace la3dm {
         // For traversability
         float tm_A;
         float tm_B;
+
+	// For semantic-traversability
+	float stm_A;
+	float stm_B;
     
         static float prior_A; // prior on alpha
         static float prior_B; // prior on beta
     };
+
+    typedef Semantics OcTreeNode;
 }
 
-#endif // LA3DM_SEMANTICS_H
+#endif // LA3DM_BGK_SEMANTICS_H

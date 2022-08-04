@@ -1,6 +1,6 @@
 #pragma once
 
-#include <opencv/cv.hpp>
+#include <opencv2/opencv.hpp>
 #include <pcl/common/transforms.h>
 #include <cv_bridge/cv_bridge.h>
 
@@ -41,7 +41,7 @@ class TartanAirData {
     void process_scans(int scan_num, std::string depth_img_dir, std::string semantic_img_dir,
                        std::string traversability_img_dir, std::string reproj_traversability_dir, std::string reproj_semantics_dir,
 		       std::string rgb_img_dir) {
-      for (int scan_id = 1; scan_id <= scan_num; ++scan_id) {
+      for (int scan_id = 2; scan_id <= scan_num; ++scan_id) {
 	std::cout << "processing " << scan_id << "/" << scan_num << std::endl;
 	char scan_id_c[256];
         sprintf(scan_id_c, "%06d", scan_id);
@@ -53,31 +53,33 @@ class TartanAirData {
 	
 	// publish rgb images
 	cv_bridge::CvImage cv_img;
-	cv_img.image = cv::imread(rgb_img_name, CV_LOAD_IMAGE_COLOR);
+	cv_img.image = cv::imread(rgb_img_name, cv::IMREAD_COLOR);
 	cv_img.encoding = "bgr8";
 	sensor_msgs::Image ros_img;
 	cv_img.toImageMsg(ros_img);
 	rgb_pub_.publish(ros_img);
 
-        cv::Mat depth_img = cv::imread(depth_img_name, CV_LOAD_IMAGE_ANYDEPTH);
+        cv::Mat depth_img = cv::imread(depth_img_name, cv::IMREAD_ANYDEPTH);
         // save depth img if reproject current scan
         int reproj_id = check_element_in_vector(scan_id, evaluation_list_);
         if (reproj_id >= 0)
           depth_imgs_.push_back(depth_img);
 
-        cv::Mat semantic_img = cv::imread(semantic_img_name, CV_LOAD_IMAGE_UNCHANGED);
-        cv::Mat traversability_img = cv::imread(traversability_img_name, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat semantic_img = cv::imread(semantic_img_name, cv::IMREAD_UNCHANGED);
+        cv::Mat traversability_img = cv::imread(traversability_img_name, cv::IMREAD_UNCHANGED);
         Eigen::Matrix4f transform = get_scan_pose(scan_id);
 
         la3dm::PCLPointCloudwithLabel cloudwlabel;
         la3dm::point3f origin;
-        process_scan(depth_img, semantic_img, transform, cloudwlabel, origin);
+        process_scan_semantics(depth_img, semantic_img, transform, cloudwlabel, origin);
         map_->insert_semantics(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_, num_class_);
         publish_semantic_map();
         publish_semantic_variance_map();
        
-        process_scan(depth_img, traversability_img, transform, cloudwlabel, origin);
-        map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
+        process_scan_traversability(depth_img, traversability_img, transform, cloudwlabel, origin);
+        la3dm::PCLPointCloudwithLabel new_cloudwlabel;
+	map_->get_training_data_semantic_traversability(cloudwlabel, new_cloudwlabel);
+	map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
         publish_traversability_map();
         publish_traversability_variance_map();
         //cloudwlabel.width = cloudwlabel.points.size();
@@ -90,7 +92,7 @@ class TartanAirData {
       }
     }
 
-    void process_scan(const cv::Mat& depth_img, const cv::Mat& label_img, const Eigen::Matrix4f& transform,
+    void process_scan_semantics(const cv::Mat& depth_img, const cv::Mat& label_img, const Eigen::Matrix4f& transform,
                       la3dm::PCLPointCloudwithLabel& cloudwlabel, la3dm::point3f& origin) {
       
       int width = depth_img.cols;
@@ -102,7 +104,40 @@ class TartanAirData {
         int uy = i / width;
         
         int pix_label = label_img.at<uint8_t>(uy, ux);
-        if (pix_label == 10)  // ignore sky label
+	//if (pix_label == 10)  // ignore sky label
+        if (pix_label == 8 || pix_label == 255)  // ignore sky label
+          continue;
+        
+        float pix_depth = (float) depth_img.at<uint16_t>(uy, ux) / depth_scaling_;
+        if (pix_depth > 0.1) {
+          la3dm::PCLPointwithLabel ptl;
+          ptl.x = (ux - cx_) * (1.0 / fx_) * pix_depth;
+          ptl.y = (uy - cy_) * (1.0 / fy_) * pix_depth;
+          ptl.z = pix_depth;
+          ptl.label = pix_label + 1;
+          cloudwlabel.points.push_back(ptl);
+        }
+      }
+      pcl::transformPointCloud(cloudwlabel, cloudwlabel, transform);
+      origin.x() = transform(0, 3);
+      origin.y() = transform(1, 3);
+      origin.z() = transform(2, 3);
+    }
+
+    void process_scan_traversability(const cv::Mat& depth_img, const cv::Mat& label_img, const Eigen::Matrix4f& transform,
+                      la3dm::PCLPointCloudwithLabel& cloudwlabel, la3dm::point3f& origin) {
+      
+      int width = depth_img.cols;
+      int height = depth_img.rows;
+      
+      cloudwlabel.points.clear();
+      for (int32_t i = 0; i < width * height; ++i) {
+        int ux = i % width;
+        int uy = i / width;
+        
+        int pix_label = label_img.at<uint8_t>(uy, ux);
+        //if (pix_label == 10)  // ignore sky label
+	if (pix_label == 8)  // ignore sky label
           continue;
         
         float pix_depth = (float) depth_img.at<uint16_t>(uy, ux) / depth_scaling_;

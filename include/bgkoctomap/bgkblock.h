@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <array>
 #include "point3f.h"
-#include "bgkoctree_node.h"
 #include "bgkoctree.h"
 
 namespace la3dm {

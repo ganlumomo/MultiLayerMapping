@@ -7,8 +7,6 @@
 #include <pcl/point_types.h>
 #include "rtree.h"
 #include "bgkblock.h"
-#include "bgkoctree_node.h"
-#include "bgkoctree_node_semantics.h"
 
 namespace la3dm {
 
@@ -60,19 +58,19 @@ namespace la3dm {
                 float prior_A,
                 float prior_B);
 
-        BGKOctoMap(float resolution,
+	BGKOctoMap(float resolution,
                 unsigned short block_depth,
                 int num_class,
-                float sf2,
+		float sf2,
                 float ell,
                 float free_thresh,
                 float occupied_thresh,
                 float var_thresh,
                 float prior_A,
                 float prior_B,
-                float prior);
+		float prior);
 
-        ~BGKOctoMap();
+	~BGKOctoMap();
 
         /// Set resolution.
         void set_resolution(float resolution);
@@ -97,18 +95,21 @@ namespace la3dm {
         void insert_pointcloud(const PCLPointCloud &cloud, const point3f &origin, float ds_resolution,
                                float free_res = 2.0f,
                                float max_range = -1);
+	
+	void insert_semantics(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
+                              float free_res = 2.0f,
+                              float max_range = -1,
+                              int num_class = 2);
 
-        void insert_semantics(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
-                               float free_res = 2.0f,
-                               float max_range = -1,
-                               int num_class = 2);
+	void insert_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
+                                   float free_res = 2.0f,
+                                   float max_range = -1);
 
-        void insert_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
-                               float free_res = 2.0f,
-                               float max_range = -1);
+	void insert_training_data(const GPPointCloud &cloud);
 
-        void insert_training_data(const GPPointCloud &cloud);
-
+	void get_training_data_semantic_traversability(const la3dm::PCLPointCloudwithLabel &cloudwlabel,
+			                               la3dm::PCLPointCloudwithLabel &new_cloudwlabel);
+	
         /// Get bounding box of the map.
         void get_bbox(point3f &lim_min, point3f &lim_max) const;
 
@@ -386,7 +387,7 @@ namespace la3dm {
         /// Downsample PCLPointCloud using PCL VoxelGrid Filtering.
         void downsample(const PCLPointCloud &in, PCLPointCloud &out, float ds_resolution) const;
         
-        void downsample(const PCLPointCloudwithLabel &in, PCLPointCloudwithLabel &out, float ds_resolution) const;
+	void downsample(const PCLPointCloudwithLabel &in, PCLPointCloudwithLabel &out, float ds_resolution) const;
 
         /// Sample free training points along sensor beams.
         void beam_sample(const point3f &hits, const point3f &origin, PointCloud &frees,
@@ -395,14 +396,14 @@ namespace la3dm {
         /// Get training data from one sensor scan.
         void get_training_data(const PCLPointCloud &cloud, const point3f &origin, float ds_resolution,
                                float free_resolution, float max_range, GPPointCloud &xy) const;
-
-        void get_training_data_semantics(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
+        
+	void get_training_data_semantics(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
+                               float free_resolution, float max_range, GPPointCloud &xy) const;
+        
+	void get_training_data_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
                                float free_resolution, float max_range, GPPointCloud &xy) const;
 
-        void get_training_data_traversability(const PCLPointCloudwithLabel &cloud, const point3f &origin, float ds_resolution,
-                               float free_resolution, float max_range, GPPointCloud &xy) const;
-
-        float resolution;
+	float resolution;
         float block_size;
         unsigned short block_depth;
         std::unordered_map<BlockHashKey, Block *> block_arr;

@@ -17,7 +17,7 @@ std::cout << "Debug: " << msg << std::endl; }
 
 namespace la3dm {
 
-     BGKOctoMap::BGKOctoMap() : BGKOctoMap(0.1f, // resolution
+    BGKOctoMap::BGKOctoMap() : BGKOctoMap(0.1f, // resolution
                                         4, // block_depth
                                         1.0, // sf2
                                         1.0, // ell
@@ -54,7 +54,7 @@ namespace la3dm {
         OcTreeNode::prior_A = prior_A;
         OcTreeNode::prior_B = prior_B;
     }
-   
+
     void BGKOctoMap::insert_training_data(const GPPointCloud &xy) {
         if (xy.empty())
             return;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <opencv/cv.hpp>
+#include <opencv2/opencv.hpp>
 #include <pcl/common/transforms.h>
 
 typedef Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXf_row;
@@ -47,14 +47,14 @@ class KittiData {
         std::string semantic_img_name(semantic_img_dir + scan_id_s + ".png");
         std::string traversability_img_name(traversability_img_dir + scan_id_s + ".png");
 
-        cv::Mat depth_img = cv::imread(depth_img_name, CV_LOAD_IMAGE_ANYDEPTH);
+        cv::Mat depth_img = cv::imread(depth_img_name, cv::IMREAD_ANYDEPTH);
         // save depth img if reproject current scan
         int reproj_id = check_element_in_vector(scan_id, evaluation_list_);
         if (reproj_id >= 0)
           depth_imgs_.push_back(depth_img);
 
-        cv::Mat semantic_img = cv::imread(semantic_img_name, CV_LOAD_IMAGE_UNCHANGED);
-        cv::Mat traversability_img = cv::imread(traversability_img_name, CV_LOAD_IMAGE_UNCHANGED);
+        cv::Mat semantic_img = cv::imread(semantic_img_name, cv::IMREAD_UNCHANGED);
+        cv::Mat traversability_img = cv::imread(traversability_img_name, cv::IMREAD_UNCHANGED);
         Eigen::Matrix4f transform = get_scan_pose(scan_id);
 
         la3dm::PCLPointCloudwithLabel cloudwlabel;
@@ -65,7 +65,10 @@ class KittiData {
         publish_semantic_variance_map();
        
         process_scan(depth_img, traversability_img, transform, cloudwlabel, origin);
-        map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
+        la3dm::PCLPointCloudwithLabel new_cloudwlabel;
+	map_->get_training_data_semantic_traversability(cloudwlabel, new_cloudwlabel);
+	map_->insert_traversability(new_cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
+	map_->insert_traversability(cloudwlabel, origin, ds_resolution_, free_resolution_, max_range_);
         publish_traversability_map();
         publish_traversability_variance_map();
         //cloudwlabel.width = cloudwlabel.points.size();
