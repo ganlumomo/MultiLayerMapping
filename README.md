@@ -65,3 +65,10 @@ Bayesian Spatial Kernel Smoothing for Scalable Dense Semantic Mapping ([PDF](htt
   doi={10.1109/LRA.2020.2965390}
 }
 ```
+
+## Acknowledgement
+
+This repo is mostly based on:
+
+[https://github.com/ganlumomo/BKISemanticMapping](https://github.com/ganlumomo/BKISemanticMapping.git)
+[https://github.com/RobustFieldAutonomyLab/la3dm](https://github.com/RobustFieldAutonomyLab/la3dm.git)
