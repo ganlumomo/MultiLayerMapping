@@ -44,11 +44,11 @@ If you found this code useful, please cite the following:
 Multi-Task Learning for Scalable and Dense Multi-Layer Bayesian Map Inference ([PDF](https://arxiv.org/pdf/2106.14986.pdf))
 ```
 @ARTICLE{gan2022multi,
-  title={Multi-Task Learning for Scalable and Dense Multi-Layer {Bayesian} Map Inference},
+  title={Multitask Learning for Scalable and Dense Multilayer {Bayesian} Map Inference},
   author={Gan, Lu and Kim, Youngji and Grizzle, Jessy W and Walls, Jeffrey M and Kim, Ayoung and Eustice, Ryan M and Ghaffari, Maani},
-  journal=IEEE_J_RO,
-  note = {to appear},
-  year={2022}
+  journal={IEEE Transactions on Robotics},
+  year={2022},
+  doi={10.1109/TRO.2022.3197106}
 }
 ```
 
